@@ -7,7 +7,9 @@ import PackageDescription
 // target (Sources/OnlyXLoginApp) is the thin WebKit/SwiftUI glue and is built only by Xcode.
 let package = Package(
     name: "OnlyXLogin",
-    platforms: [.iOS(.v15)],
+    // macOS 12 is where URLSession's async API begins; without it a `swift test` on a Mac (CI's
+    // second run of the core) compiles for 10.13 and fails on `data(for:)`. Linux is unaffected.
+    platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "OnlyXLoginCore", targets: ["OnlyXLoginCore"]),
     ],
