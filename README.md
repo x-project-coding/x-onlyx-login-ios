@@ -23,7 +23,8 @@ Then, from the chat where your manager sent your connect link (it starts with `o
 
 - **tap it** — iOS asks whether to open OnlyX Login; choose Open; or
 - **copy it** (press and hold → Copy), open OnlyX Login, tap **Paste your link**. Many chat apps
-  do not make custom links tappable; pasting always works.
+  do not make custom links tappable; pasting always works. iOS asks once whether to allow the
+  paste — that is the system, not the app.
 
 The app opens on the OnlyFans sign-in page. Sign in as usual — password, email code, and the
 camera check if OnlyFans asks for one (allow the camera when your iPhone asks; use the front
@@ -36,8 +37,11 @@ Help is **inside the app** (the Help button), and it answers without a connectio
 - The sign-in happens in a private, in-memory browser inside the app (`WKWebView` on a
   non-persistent data store). Cookies, storage and cache are dropped with the run; nothing is
   written to the phone.
-- **The browser presents the iPhone it is running on** — native identity, always. See below for
-  why that is the only coherent option on iOS.
+- **The browser presents the iPhone it is running on, as Safari presents it** — native identity,
+  always. A bare WKWebView's User-Agent lacks Safari's `Version/… Safari/604.1` tokens, which is
+  the in-app-browser signature identity vendors treat as a different device class; the app adds
+  exactly those tokens so the string is what her Safari sends. See below for why native is the
+  only coherent option on iOS.
 - The sign-in uses **the phone's own internet connection**. OnlyFans' identity check runs on the
   same device that signs in, so the desktop's "same network as the phone that scans the QR"
   problem cannot arise here — the phone IS the device.
@@ -62,7 +66,8 @@ every difference below follows from that.
 | `session.cookies.get` | `WKHTTPCookieStore.getAllCookies` — HttpOnly included, which `document.cookie` would not be |
 | `Runtime.evaluate` for `bcTokenSha` | `evaluateJavaScript` with the same expression |
 | a loopback CONNECT forwarder when the server offers a tunnel | **not supported**: WKWebView takes no per-view proxy. The server's default is `tunnel: null`; if it ever offers one, the app stops with an honest message rather than sign in over the wrong network. (A NetworkExtension packet tunnel could do it later; it is a separate, entitlement-gated piece of work.) |
-| popups: load in place / optional real popup | `createWebViewWith` returns nil and loads an https target in place |
+| popups: load in place / optional real popup | `createWebViewWith` returns nil and loads an https target in place (a form POST body does not ride that load — WebKit does not carry it) |
+| `will-navigate` https-only guard, main frame only | `decidePolicyFor` is asked for every frame: the main frame is https-only; a sub-frame may also be `about:srcdoc`, `blob:` or `data:`, or the vendor's iframe blanks silently |
 | `render-process-gone` | `webViewWebContentProcessDidTerminate` |
 | auto-update via electron-updater | TestFlight / App Store |
 

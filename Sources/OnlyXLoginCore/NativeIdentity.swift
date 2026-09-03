@@ -31,6 +31,19 @@ public enum NativeIdentity {
         identity.source == "native"
     }
 
+    /// The Safari tokens a bare WKWebView leaves out of its User-Agent — `Version/<major.minor>
+    /// Mobile/15E148 Safari/604.1`. Set as `applicationNameForUserAgent`, they make the string
+    /// exactly what her Safari sends on this iOS; without them the UA is the in-app-browser
+    /// signature identity vendors treat as a different device class (found in review).
+    /// `15E148` is the build token every iOS Safari has carried since iOS 11, and `604.1` the
+    /// frozen Safari version — both constants in real Safari, so matching them is not a guess.
+    public static func safariApplicationName(systemVersion: String) -> String {
+        let parts = systemVersion.split(separator: ".").map(String.init)
+        let major = parts.first ?? "17"
+        let minor = parts.count > 1 ? parts[1] : "0"
+        return "Version/\(major).\(minor) Mobile/15E148 Safari/604.1"
+    }
+
     /// The platform string sent with the claim, e.g. `ios-17.5`. Recorded in ConnectAppPass.platform
     /// so iPhone sign-ins are distinguishable in the estate. Bounded at the server's 32 chars.
     public static func platformTag(systemVersion: String) -> String {

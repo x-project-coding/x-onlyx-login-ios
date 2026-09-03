@@ -12,7 +12,10 @@ jobs:
     container: swift:6.0-noble
     steps:
       - uses: actions/checkout@v4
-      - run: swift test 2>&1 | tail -20
+      - shell: bash
+        run: |
+          set -o pipefail
+          swift test 2>&1 | tail -20
   ios:
     # The WebKit/SwiftUI glue only compiles with Xcode. Built for the simulator with signing off;
     # a device build and TestFlight upload need an Apple team (README "Releasing").

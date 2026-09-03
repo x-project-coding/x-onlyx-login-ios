@@ -21,7 +21,7 @@ public enum SessionCapture {
 
     /// A host that is onlyfans.com or a subdomain of it — the same anchored check the cookie filter
     /// uses, so the URL filter and the jar filter cannot disagree about what OnlyFans is.
-    static func isOnlyFansHost(_ host: String) -> Bool {
+    public static func isOnlyFansHost(_ host: String) -> Bool {
         let h = host.lowercased()
         return h == "onlyfans.com" || h.hasSuffix(".onlyfans.com")
     }
@@ -70,6 +70,39 @@ public enum SessionCapture {
             self.name = name; self.value = value; self.domain = domain; self.path = path
             self.isSession = isSession; self.expires = expires; self.httpOnly = httpOnly; self.secure = secure
         }
+        /// The platform cookie's shape, as WKHTTPCookieStore hands it over: a nil `expiresDate` IS a
+        /// session cookie, and that decision lives here so it is tested rather than made in the
+        /// app target where no Linux test can reach it.
+        public init(name: String, value: String, domain: String, path: String?, expiresDate: Date?,
+                    httpOnly: Bool?, secure: Bool?) {
+            self.init(name: name, value: value, domain: domain, path: path,
+                      isSession: expiresDate == nil, expires: expiresDate?.timeIntervalSince1970,
+                      httpOnly: httpOnly, secure: secure)
+        }
+    }
+
+    /// The device token as `evaluateJavaScript` hands the expression's result back: a JSON string
+    /// `{"key","value"}`, or `null`/nil/NSNull for none. Anything else is none.
+    public static func parseXbc(_ result: Any?) -> (key: String, value: String)? {
+        guard let json = result as? String, let data = json.data(using: .utf8),
+              let dict = try? JSONSerialization.jsonObject(with: data) as? [String: String],
+              let key = dict["key"], !key.isEmpty, let value = dict["value"], !value.isEmpty else { return nil }
+        return (key: key, value: value)
+    }
+
+    /// The navigation guard, for ALL frames — WebKit asks about every one, where Electron's
+    /// `will-navigate` asked about the main frame only. The main frame is https or about:blank,
+    /// nothing else. A sub-frame may also be the shapes a page builds for itself (`about:srcdoc`,
+    /// `blob:`, `data:`): refusing those blanks an identity vendor's iframe silently (found in
+    /// review). Plain http, file and custom schemes are refused everywhere.
+    public static func allowsNavigation(url: URL?, isMainFrame: Bool) -> Bool {
+        guard let url else { return false }
+        let scheme = url.scheme?.lowercased() ?? ""
+        if scheme == "https" { return true }
+        let text = url.absoluteString.lowercased()
+        if text == "about:blank" { return true }
+        if isMainFrame { return false }
+        return text.hasPrefix("about:") || scheme == "blob" || scheme == "data"
     }
 
     /// Both login cookies present with a value — the jar half of "signed in".

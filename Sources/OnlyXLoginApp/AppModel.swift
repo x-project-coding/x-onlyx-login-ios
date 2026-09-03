@@ -1,7 +1,10 @@
 import Foundation
+import OSLog
 import SwiftUI
 import WebKit
 import OnlyXLoginCore
+
+private let flowLog = Logger(subsystem: "ai.onlyx.login", category: "flow")
 
 /// The run: one opened link, from claim to verdict. The effects (network, timers, the web view)
 /// live here; every decision is asked of OnlyXLoginCore.ConnectFlow so the behaviour is the one the
@@ -92,6 +95,9 @@ final class AppModel: ObservableObject {
     private func fail(_ r: Run, _ message: UserMessage) {
         guard !isStale(r) else { return }
         r.done = true
+        r.settleTask?.cancel()
+        r.pollTask?.cancel()
+        flowLog.error("run \(r.id) failed: \(message.title, privacy: .public)")
         signIn?.close()
         signIn = nil
         phase = .error(message, username: r.account?.username)
@@ -116,6 +122,7 @@ final class AppModel: ObservableObject {
         r.token = opened.sessionToken
         r.account = opened.account
         r.expiresAt = opened.expiresAt
+        flowLog.info("run \(r.id): pass opened (\(opened.identity.source ?? "seat", privacy: .public) identity, tunnel \(opened.tunnel?.url == nil ? "none" : "offered", privacy: .public))")
 
         switch ConnectFlow.disposition(for: opened) {
         case .tunnelUnsupported:
@@ -135,6 +142,14 @@ final class AppModel: ObservableObject {
             Task { @MainActor in
                 self?.fail(r, UserMessage(title: "The sign-in window stopped",
                                           detail: "Please open the link again."))
+            }
+        }
+        controller.onCameraBlocked = { [weak self] in
+            Task { @MainActor in
+                guard let self, !self.isStale(r) else { return }
+                self.phase = .signin(username: r.account?.username, expiresAt: r.expiresAt, notice: UserMessage(
+                    title: "Your iPhone is blocking the camera for this app",
+                    detail: "Open Settings › OnlyX Login › Camera, switch it on, then open your link again."))
             }
         }
         signIn = controller
@@ -170,6 +185,7 @@ final class AppModel: ObservableObject {
         guard !isStale(r) else { return }
         guard SessionCapture.hasLoginCookies(cookies) else {
             // Named, but the jar is not there yet: the next /users/me tries again.
+            flowLog.info("run \(r.id): named a user but the login cookies are not in the jar yet")
             return
         }
         // The device token, retried: OnlyFans writes bcTokenSha around sign-in rather than at it,
@@ -181,10 +197,16 @@ final class AppModel: ObservableObject {
             xbc = await controller.readXbc()
         }
         guard !isStale(r) else { return }
-        guard let xbc else { return } // left uncaptured; the next /users/me tries again
+        guard let xbc else {
+            // Left uncaptured so the next /users/me tries again, rather than spending the pass on
+            // a jar the API will refuse.
+            flowLog.info("run \(r.id): signed in but the device token is not in storage yet — waiting")
+            return
+        }
 
         let payload = SessionCapture.buildSessionPayload(cookies: cookies, xbc: xbc)
         r.captured = true
+        flowLog.info("run \(r.id): captured \(payload.cookies.count) cookies + device token")
         phase = .captured(username: r.account?.username)
 
         guard let token = r.token else { return }
@@ -197,6 +219,7 @@ final class AppModel: ObservableObject {
             case let .retrySignIn(notice, remember):
                 r.captured = false
                 if remember { r.refusedIds.insert(me.id) }
+                flowLog.notice("run \(r.id): import refused (\(e.code, privacy: .public)) — waiting for another sign-in")
                 phase = .signin(username: r.account?.username, expiresAt: r.expiresAt, notice: notice)
                 return
             case let .fail(message):
@@ -209,7 +232,7 @@ final class AppModel: ObservableObject {
             return fail(r, Messages.forImport("unreachable"))
         }
         guard !isStale(r) else { return }
-        _ = result
+        flowLog.info("run \(r.id): session imported at \(result.importedAt, privacy: .public); seat \(result.seat.map { "\($0.workerId)#\($0.seatIndex)" } ?? "pending", privacy: .public)")
 
         // The browser has done its job: close it, drop the jar, then watch the seat adopt it.
         signIn?.close()

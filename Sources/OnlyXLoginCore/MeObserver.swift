@@ -36,7 +36,8 @@ public enum MeObserver {
         window.fetch = function (input, init) {
           const p = nativeFetch.apply(this, arguments);
           try {
-            const url = typeof input === 'string' ? input : (input && input.url) || '';
+            const url = typeof input === 'string' ? input
+              : (input instanceof URL) ? input.href : (input && input.url) || '';
             if (isMe(url)) {
               p.then((res) => {
                 try { res.clone().text().then((t) => report(res.status, t)).catch(() => {}); } catch (e) {}
@@ -54,7 +55,16 @@ public enum MeObserver {
       };
       XMLHttpRequest.prototype.send = function () {
         if (this.__onlyxMe) {
-          this.addEventListener('load', () => { try { report(this.status, this.responseText); } catch (e) {} });
+          this.addEventListener('load', () => {
+            try {
+              // responseText THROWS unless responseType is '' or 'text'; a client that asked for
+              // 'json' would otherwise never be heard from, and the catch would hide why.
+              const rt = this.responseType;
+              const body = (rt === '' || rt === 'text') ? this.responseText
+                : (rt === 'json') ? JSON.stringify(this.response) : '';
+              report(this.status, body);
+            } catch (e) {}
+          });
         }
         return XS.apply(this, arguments);
       };
@@ -71,6 +81,10 @@ public enum MeObserver {
     /// Decode a message body as WebKit hands it over (`[String: Any]`). Anything malformed is nil —
     /// a page cannot forge a sign-in by posting garbage, because `judgeMe` still has to name an id
     /// and the jar still has to carry the login cookies.
+    /// The largest body accepted from the page. A real `/users/me` is a few KB; a page cannot
+    /// make the app parse megabytes on the main thread.
+    public static let maxBodyBytes = 1 << 20
+
     public static func decode(_ any: Any) -> Report? {
         guard let dict = any as? [String: Any] else { return nil }
         let status: Int
@@ -79,7 +93,7 @@ public enum MeObserver {
         case let n as NSNumber: status = n.intValue
         default: return nil
         }
-        guard let body = dict["body"] as? String else { return nil }
+        guard let body = dict["body"] as? String, body.utf8.count <= maxBodyBytes else { return nil }
         return Report(status: status, body: body)
     }
 
