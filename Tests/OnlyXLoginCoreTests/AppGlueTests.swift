@@ -50,13 +50,26 @@ import JavaScriptCore
 /// The observer script, EXECUTED — on macOS/iOS where JavaScriptCore is available (CI runs the
 /// core suite on macOS). A substring test cannot fail on a broken script; this one does.
 final class MeObserverScriptTests: XCTestCase {
-    private func run(fetchStatus: Int, fetchBody: String, urls: [String], xhr: (url: String, responseType: String, text: String?, json: String?)? = nil) -> [[String: Any]] {
+    private func run(fetchStatus: Int, fetchBody: String, urls: [String], urlObject: String? = nil,
+                     xhr: (url: String, responseType: String, text: String?, json: String?)? = nil) -> [[String: Any]] {
         let ctx = JSContext()!
         var errors: [String] = []
         ctx.exceptionHandler = { _, e in errors.append(e?.toString() ?? "?") }
         ctx.evaluateScript("""
         var reports = [];
         var window = this;
+        // A bare JSContext has no URL constructor (the first CI run reported nothing at all, for
+        // exactly that reason); this is the subset the script uses: protocol, hostname, pathname,
+        // href, absolute or root-relative against a base.
+        function URL(u, base) {
+          var m = /^([a-z]+:)\\/\\/([^\\/?#]+)([^?#]*)/i.exec(u);
+          if (m) { this.protocol = m[1]; this.hostname = m[2]; this.pathname = m[3] || '/'; this.href = u; return; }
+          if (base && u.charAt(0) === '/') {
+            var b = /^([a-z]+:)\\/\\/([^\\/?#]+)/i.exec(base);
+            this.protocol = b[1]; this.hostname = b[2]; this.pathname = u.split('?')[0]; this.href = b[1] + '//' + b[2] + u; return;
+          }
+          throw new TypeError('Invalid URL: ' + u);
+        }
         window.location = { href: 'https://onlyfans.com/' };
         window.webkit = { messageHandlers: { onlyxMe: { postMessage: function (m) { reports.push(m); } } } };
         window.fetch = function (input, init) {
@@ -71,6 +84,7 @@ final class MeObserverScriptTests: XCTestCase {
         """)
         ctx.evaluateScript(MeObserver.script)
         for u in urls { ctx.evaluateScript("window.fetch('\(u)');") }
+        if let urlObject { ctx.evaluateScript("window.fetch(new URL('\(urlObject)'));") }
         if let xhr {
             let text = xhr.text.map { $0.debugDescription } ?? "undefined"
             let json = xhr.json ?? "undefined"
@@ -95,8 +109,9 @@ final class MeObserverScriptTests: XCTestCase {
 
     func testFetchReportsOnlyUsersMeWithStatusAndBody() {
         let reports = run(fetchStatus: 200, fetchBody: #"{"id":7,"username":"a"}"#,
-                          urls: ["https://onlyfans.com/api2/v2/users/me", "https://onlyfans.com/api2/v2/users/1", "/api2/v2/users/me"])
-        XCTAssertEqual(reports.count, 2, "the absolute and the relative /users/me, not /users/1")
+                          urls: ["https://onlyfans.com/api2/v2/users/me", "https://onlyfans.com/api2/v2/users/1", "/api2/v2/users/me"],
+                          urlObject: "https://onlyfans.com/api2/v2/users/me")
+        XCTAssertEqual(reports.count, 3, "the absolute, the relative and the URL-object /users/me, not /users/1")
         XCTAssertEqual(reports.first?["status"] as? Int, 200)
         XCTAssertEqual(reports.first?["body"] as? String, #"{"id":7,"username":"a"}"#)
     }
