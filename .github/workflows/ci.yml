@@ -1,0 +1,36 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  core:
+    # Every rule the app relies on — link parsing, capture, messages, the flow, the API client —
+    # lives in OnlyXLoginCore and runs here with no simulator, on Linux, exactly as on the dev box.
+    name: core (swift test, Linux)
+    runs-on: ubuntu-latest
+    container: swift:6.0-noble
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test 2>&1 | tail -20
+  ios:
+    # The WebKit/SwiftUI glue only compiles with Xcode. Built for the simulator with signing off;
+    # a device build and TestFlight upload need an Apple team (README "Releasing").
+    name: iOS app (xcodebuild, simulator)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - run: xcodegen generate
+      - name: Build for the simulator
+        run: |
+          xcodebuild -project OnlyXLogin.xcodeproj -scheme OnlyXLogin \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM="" \
+            | xcpretty || xcodebuild -project OnlyXLogin.xcodeproj -scheme OnlyXLogin \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM="" 2>&1 | tail -60
+      - name: Core tests on macOS too
+        run: swift test 2>&1 | tail -5

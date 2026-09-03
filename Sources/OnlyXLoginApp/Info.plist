@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>OnlyX Login</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<!-- The link: onlyx-connect://open?c=<claim>. The same scheme the mac app registers, so the
+	     connect page and the API mint one link for every platform. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>ai.onlyx.login.connect</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>onlyx-connect</string>
+			</array>
+		</dict>
+	</array>
+	<!-- The selfie check. Shown by iOS the first time OnlyFans' vendor asks for the camera. -->
+	<key>NSCameraUsageDescription</key>
+	<string>OnlyFans may ask you to take a selfie to confirm your identity when you sign in. OnlyX Login shows that check in the sign-in screen and records nothing.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Some identity checks ask for a short video with sound. OnlyX Login records nothing.</string>
+	<!-- An empty launch-screen dictionary gives the system default; there is no asset catalog. -->
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+	</dict>
+</dict>
+</plist>

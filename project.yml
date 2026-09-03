@@ -1,0 +1,49 @@
+# XcodeGen spec. `xcodegen generate` writes OnlyXLogin.xcodeproj; the project file is NOT committed
+# (it is generated, and a hand-edited pbxproj is how two people's Xcode disagree). CI does the same.
+name: OnlyXLogin
+options:
+  bundleIdPrefix: ai.onlyx
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+packages:
+  # The Foundation-only core, tested on Linux (see Package.swift).
+  OnlyXLoginCore:
+    path: .
+targets:
+  OnlyXLogin:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources/OnlyXLoginApp
+        excludes: ["Info.plist"]
+    dependencies:
+      - package: OnlyXLoginCore
+        product: OnlyXLoginCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.onlyx.login
+        PRODUCT_NAME: OnlyX Login
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        INFOPLIST_FILE: Sources/OnlyXLoginApp/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1"            # iPhone. iPad has a keyboard and a Mac-shaped web.
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
+        # Set your team in Xcode (Signing & Capabilities) or via DEVELOPMENT_TEAM=... on the
+        # command line; CI builds for the simulator with signing off.
+        DEVELOPMENT_TEAM: ""
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+    # No `info:` block on purpose: XcodeGen would GENERATE a plist at that path and overwrite the
+    # hand-written one above, which carries the URL scheme and the camera usage strings.
+schemes:
+  OnlyXLogin:
+    build:
+      targets: { OnlyXLogin: all }
+    run:
+      config: Debug
+      environmentVariables:
+        # Debug builds honour this (Config.resolveApiBase); release builds ignore it.
+        ONLYX_API_BASE: ""
