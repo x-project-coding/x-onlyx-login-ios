@@ -17,9 +17,19 @@ jobs:
     # The WebKit/SwiftUI glue only compiles with Xcode. Built for the simulator with signing off;
     # a device build and TestFlight upload need an Apple team (README "Releasing").
     name: iOS app (xcodebuild, simulator)
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      # The newest Xcode on the image. XcodeGen writes the project in the CURRENT format
+      # (objectVersion 77 = Xcode 16), and the image's default Xcode can lag it by a major
+      # version; the first two runs died on "future Xcode project file format". Selecting the
+      # newest installed Xcode is what a developer's Mac does too.
+      - name: Select the newest Xcode
+        run: |
+          latest=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          echo "using $latest"
+          sudo xcode-select -s "$latest"
+          xcodebuild -version
       - run: brew install xcodegen
       - run: xcodegen generate
       # `shell: bash` is what turns on pipefail here: without it a pipeline's status is its LAST
