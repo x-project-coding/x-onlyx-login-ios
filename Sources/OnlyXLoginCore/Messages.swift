@@ -7,6 +7,7 @@ import Foundation
 public struct UserMessage: Equatable, Sendable {
     public let title: String
     public let detail: String
+    public init(title: String, detail: String) { self.title = title; self.detail = detail }
 }
 
 public enum Messages {
