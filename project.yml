@@ -3,6 +3,9 @@
 name: OnlyXLogin
 options:
   bundleIdPrefix: ai.onlyx
+  # Pins the pbxproj format. XcodeGen 2.45 otherwise writes Xcode 16's objectVersion 77, which an
+  # Xcode 15 (the macos-14 runner's default, and many Macs) refuses to open at all.
+  xcodeVersion: "15.4"
   deploymentTarget:
     iOS: "15.0"
   createIntermediateGroups: true

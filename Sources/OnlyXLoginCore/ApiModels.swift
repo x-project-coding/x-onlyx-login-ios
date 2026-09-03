@@ -131,3 +131,6 @@ public struct ApiError: Error, Sendable, Equatable {
 
 /// The body an error response carries: `{ "error": "<code>" }`.
 struct ApiErrorBody: Decodable { let error: String? }
+
+/// The absent body of a GET, typed so the generic `call` has something to be generic over.
+struct NoBody: Encodable {}

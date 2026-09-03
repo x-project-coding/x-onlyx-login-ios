@@ -22,15 +22,21 @@ jobs:
       - uses: actions/checkout@v4
       - run: brew install xcodegen
       - run: xcodegen generate
+      # `shell: bash` is what turns on pipefail here: without it a pipeline's status is its LAST
+      # command's, and `xcodebuild | tail` reports green whatever xcodebuild did. The first run
+      # of this workflow passed that way with no project generated at all.
       - name: Build for the simulator
+        shell: bash
         run: |
+          set -o pipefail
           xcodebuild -project OnlyXLogin.xcodeproj -scheme OnlyXLogin \
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
             -configuration Debug build \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM="" \
-            | xcpretty || xcodebuild -project OnlyXLogin.xcodeproj -scheme OnlyXLogin \
-            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
-            -configuration Debug build \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM="" 2>&1 | tail -60
+            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM="" 2>&1 \
+            | grep -E "error:|warning: .*\.swift|BUILD (SUCCEEDED|FAILED)|Compiling|Linking" | tail -80
+          test -d "$(xcodebuild -project OnlyXLogin.xcodeproj -scheme OnlyXLogin -sdk iphonesimulator -showBuildSettings 2>/dev/null | awk '/ BUILT_PRODUCTS_DIR =/{print $3}')/OnlyX Login.app"
       - name: Core tests on macOS too
-        run: swift test 2>&1 | tail -5
+        shell: bash
+        run: |
+          set -o pipefail
+          swift test 2>&1 | tail -40

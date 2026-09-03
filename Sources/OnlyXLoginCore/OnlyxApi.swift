@@ -28,8 +28,13 @@ public struct OnlyxApi: Sendable {
         self.caps = caps
     }
 
-    func call<T: Decodable>(_ method: String, _ path: String, token: String? = nil,
-                            body: (some Encodable)? = Optional<Int>.none) async throws -> T {
+    /// A request with no body (the status poll).
+    func call<T: Decodable>(_ method: String, _ path: String, token: String? = nil) async throws -> T {
+        try await call(method, path, token: token, body: Optional<NoBody>.none)
+    }
+
+    func call<T: Decodable, B: Encodable>(_ method: String, _ path: String, token: String? = nil,
+                                          body: B?) async throws -> T {
         guard let url = URL(string: base + path) else { throw ApiError(status: 0, code: "unreachable") }
         var req = URLRequest(url: url, timeoutInterval: Self.timeout)
         req.httpMethod = method
