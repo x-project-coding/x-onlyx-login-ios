@@ -17,6 +17,18 @@ details in App Store Connect only; never commit them to this repository.
 
 - Group: `OnlyX Internal`
 - Automatic distribution: enabled
+- Build: `1.0 (1)`
+- Testers: none configured in App Store Connect
+
+## External testing
+
+- Group: `OnlyX Login Beta`
+- Build: `1.0 (1)`
+- Beta App Review status: Waiting for Review
+- Public link: <https://testflight.apple.com/join/fk6C6an3>
+- Public-link access: open to anyone, with no tester limit
+
+The public link becomes joinable after Apple approves the build for external testing.
 
 ## Test information
 
@@ -47,15 +59,15 @@ support@onlyx.ai so we can issue a fresh review link and designated test account
 Camera access is used only if OnlyFans requests identity verification. The app has no purchases,
 subscriptions, ads, or user-generated content.
 
-## Before external testing
+## External-testing checklist
 
-- Add a non-production reviewer account in App Store Connect. Reviewer credentials must not
-  expire; the one-time connect link must be supplied separately when Apple begins review.
-- Enter an actively monitored review contact name, email, and international-format phone number.
-- Create an internal group first, then an external group named `OnlyX Login Beta`.
-- Upload a signed archive, answer export compliance, attach build 1 to the external group, paste
-  the **What to test** text above, and submit the first build for TestFlight App Review.
-- Enable the public link only after Apple approves the build.
+- [x] Enter an actively monitored Beta App Review contact.
+- [x] Create the `OnlyX Login Beta` external group.
+- [x] Upload and validate the signed `1.0 (1)` archive.
+- [x] Declare that the app does not use non-exempt encryption.
+- [x] Attach the build and submit it to Beta App Review.
+- [x] Create the public invite link.
+- [ ] Wait for Apple to approve the build; the public link is inactive until approval.
 
 ## App Store follow-up
 
