@@ -18,13 +18,14 @@ details in App Store Connect only; never commit them to this repository.
 - Group: `OnlyX Internal`
 - Automatic distribution: enabled
 - Build: `1.0 (1)`
-- Testers: none configured in App Store Connect
+- Testers: 1 configured in App Store Connect
 
 ## External testing
 
 - Group: `OnlyX Login Beta`
 - Build: `1.0 (1)`
-- Beta App Review status: Waiting for Review
+- Beta App Review status: Rejected on September 5, 2026; requested demo video supplied and
+  response sent to App Review
 - Public link: <https://testflight.apple.com/join/fk6C6an3>
 - Public-link access: open to anyone, with no tester limit
 
@@ -59,6 +60,12 @@ support@onlyx.ai so we can issue a fresh review link and designated test account
 Camera access is used only if OnlyFans requests identity verification. The app has no purchases,
 subscriptions, ads, or user-generated content.
 
+Demo video recorded on a physical iPhone 17 Pro Max using the current `1.0 (1)` build (not
+Simulator): <https://drive.google.com/file/d/1Fhna6Cwxv0lJYRobQdjPjHt3QfNcG39X/view?usp=sharing>
+
+The video demonstrates opening the OnlyX connect invitation in Safari, handing off to OnlyX Login,
+and opening the embedded OnlyFans sign-in flow.
+
 ## External-testing checklist
 
 - [x] Enter an actively monitored Beta App Review contact.
@@ -67,7 +74,9 @@ subscriptions, ads, or user-generated content.
 - [x] Declare that the app does not use non-exempt encryption.
 - [x] Attach the build and submit it to Beta App Review.
 - [x] Create the public invite link.
-- [ ] Wait for Apple to approve the build; the public link is inactive until approval.
+- [x] Add Apple's requested physical-device demo video to Review Notes and reply to App Review.
+- [ ] Wait for Apple to continue the review and approve the build; the public link is inactive
+  until approval.
 
 ## App Store follow-up
 
