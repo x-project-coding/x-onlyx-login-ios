@@ -28,7 +28,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ai.onlyx.login
         PRODUCT_NAME: OnlyX Login
-        MARKETING_VERSION: 1.0.0
+        MARKETING_VERSION: 1.0
         CURRENT_PROJECT_VERSION: 1
         INFOPLIST_FILE: Sources/OnlyXLoginApp/Info.plist
         GENERATE_INFOPLIST_FILE: NO
