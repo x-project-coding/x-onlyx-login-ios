@@ -7,10 +7,16 @@ details in App Store Connect only; never commit them to this repository.
 
 - Platform: iOS
 - Name: OnlyX Login
+- App Store Connect Apple ID: `6808706039`
 - Primary language: English (U.S.)
 - Bundle ID: `ai.onlyx.login`
 - SKU: `onlyx-login-ios`
 - User access: Full Access
+
+## Internal testing
+
+- Group: `OnlyX Internal`
+- Automatic distribution: enabled
 
 ## Test information
 
