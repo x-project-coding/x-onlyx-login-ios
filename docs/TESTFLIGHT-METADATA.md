@@ -17,15 +17,16 @@ details in App Store Connect only; never commit them to this repository.
 
 - Group: `OnlyX Internal`
 - Automatic distribution: enabled
-- Build: `1.0 (1)`
+- Build: `1.0 (2)`
 - Testers: 1 configured in App Store Connect
 
 ## External testing
 
 - Group: `OnlyX Login Beta`
-- Build: `1.0 (1)`
-- Beta App Review status: Rejected on September 5, 2026; requested demo video supplied and
-  response sent to App Review
+- Build: `1.0 (2)`
+- Beta App Review status: Replacement `1.0 (2)` submitted and waiting for review after `1.0 (1)`
+  was rejected on September 5, 2026; Apple's requested demo video was supplied and a response was
+  sent to App Review
 - Public link: <https://testflight.apple.com/join/fk6C6an3>
 - Public-link access: open to anyone, with no tester limit
 
@@ -60,8 +61,11 @@ support@onlyx.ai so we can issue a fresh review link and designated test account
 Camera access is used only if OnlyFans requests identity verification. The app has no purchases,
 subscriptions, ads, or user-generated content.
 
-Demo video recorded on a physical iPhone 17 Pro Max using the current `1.0 (1)` build (not
-Simulator): <https://drive.google.com/file/d/1Fhna6Cwxv0lJYRobQdjPjHt3QfNcG39X/view?usp=sharing>
+Demo video recorded on a physical iPhone 17 Pro Max using `1.0 (1)` (not Simulator):
+<https://drive.google.com/file/d/1Fhna6Cwxv0lJYRobQdjPjHt3QfNcG39X/view?usp=sharing>
+
+Build `1.0 (2)` contains the same app code as the recording; its only change is the required build
+number increment for resubmission after `1.0 (1)` was rejected.
 
 The video demonstrates opening the OnlyX connect invitation in Safari, handing off to OnlyX Login,
 and opening the embedded OnlyFans sign-in flow.
@@ -71,12 +75,13 @@ and opening the embedded OnlyFans sign-in flow.
 - [x] Enter an actively monitored Beta App Review contact.
 - [x] Create the `OnlyX Login Beta` external group.
 - [x] Upload and validate the signed `1.0 (1)` archive.
+- [x] Upload and validate the signed replacement `1.0 (2)` archive.
 - [x] Declare that the app does not use non-exempt encryption.
 - [x] Attach the build and submit it to Beta App Review.
 - [x] Create the public invite link.
 - [x] Add Apple's requested physical-device demo video to Review Notes and reply to App Review.
-- [ ] Wait for Apple to continue the review and approve the build; the public link is inactive
-  until approval.
+- [x] Add `1.0 (2)` to the external group and submit it to Beta App Review.
+- [ ] Wait for Apple to approve `1.0 (2)`; the public link is inactive until approval.
 
 ## App Store follow-up
 
