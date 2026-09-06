@@ -11,7 +11,7 @@ by the same rules, and uses the same words. Where iOS differs, the difference is
 
 **Release handoff, September 6, 2026:** replacement **1.0 (4)** was compiled on supported macOS
 26.6.2 with Xcode 26.6. Its 51 Release tests, signing/export checks and Apple package validation
-passed; the upload succeeded and Apple processing is pending. App Store selection/submission needs
+passed; Apple processed build 4 as **VALID and App Store eligible**. Selection/submission needs
 the account-holder sign-in. The existing **TestFlight build 3** review was left untouched. This
 corrects the unsupported compilation environment without claiming the exact historical Invalid
 Binary cause or approval. See the [build record](docs/RELEASE-4.json) and

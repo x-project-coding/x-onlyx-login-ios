@@ -52,8 +52,10 @@
   "store_ipa_sha256": "7fbca8c53f9281c913fd456ef133e4b0622fd068fb9a2bbf75aca145f18fd264",
   "executable_dsym_uuid": "2E437493-2A37-37E3-BA1F-501A0F466E00",
   "local_export_host": "macOS 27 beta (26A5421a), outside Xcode 26.6 supported host range; compilation used the recorded supported CI host",
-  "upload_state": "upload_succeeded_with_no_errors; processing_pending",
-  "production_review_state": "awaiting_account_holder_sign_in_to_select_and_submit_build_4",
+  "upload_state": "VALID",
+  "production_review_state": "not_submitted; account_holder_sign_in_required_to_select_and_submit_build_4",
   "existing_testflight_build_3": "WAITING_FOR_BETA_REVIEW; not modified",
-  "scope": "Build/distribution workflow only; app runtime, API, connect scheme and camera/microphone usage descriptions unchanged. Historical Invalid Binary cause is not proven."
+  "scope": "Build/distribution workflow only; app runtime, API, connect scheme and camera/microphone usage descriptions unchanged. Historical Invalid Binary cause is not proven.",
+  "build_audience": "APP_STORE_ELIGIBLE",
+  "apple_uploaded_at": "2026-09-06T20:49:58+08:00"
 }
