@@ -7,3 +7,8 @@ DerivedData/
 *.ipa
 *.dSYM.zip
 .DS_Store
+
+# Local archives, signing material, upload diagnostics and generated screenshots.
+build/
+__pycache__/
+*.pyc

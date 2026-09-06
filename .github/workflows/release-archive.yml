@@ -1,0 +1,47 @@
+name: Supported-host unsigned release archive
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: 'Unused positive App Store build number (4 for the current rebuild)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: onlyx-login-release-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      # Explicit stable Xcode; never use the runner's mutable default selection.
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      ONLYX_BUILD_NUMBER: ${{ inputs.build_number }}
+    steps:
+      - name: Check out the dispatched commit
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: Test archive packaging checks
+        run: |
+          python3 -m unittest discover -s scripts -p test_build_environment.py -v
+          python3 -m unittest discover -s scripts -p test_ci_release_archive.py -v
+
+      - name: Build an unsigned Release archive and record provenance
+        run: python3 scripts/ci-release-archive.py
+
+      - name: Preserve the archive ZIP and verification records
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: OnlyXLogin-${{ inputs.build_number }}-unsigned-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/ci-release/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
