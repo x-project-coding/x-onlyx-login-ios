@@ -9,11 +9,13 @@ It speaks the **same server contract** as the mac app — `POST /connect-app/ope
 /connect-app/session`, `GET /connect-app/status` on `of-api.onlyx.ai` — captures the **same jar**
 by the same rules, and uses the same words. Where iOS differs, the difference is written down below.
 
-**Release handoff, September 6, 2026:** the existing runtime is **1.0 (3)**. The operator reported
-App Store **Invalid Binary**, while build 3 remains **Waiting for Review in TestFlight**; these are
-separate review queues, and the exact App Store cause is not confirmed. The supported-host workflow
-was merged in [PR #4](https://github.com/x-project-coding/x-onlyx-login-ios/pull/4), and the build 4
-rebuild is running; no build 4 upload or approval is claimed. Follow the [supported release instructions](docs/SUPPORTED-RELEASE.md).
+**Release handoff, September 6, 2026:** replacement **1.0 (4)** was compiled on supported macOS
+26.6.2 with Xcode 26.6. Its 51 Release tests, signing/export checks and Apple package validation
+passed; the upload succeeded and Apple processing is pending. App Store selection/submission needs
+the account-holder sign-in. The existing **TestFlight build 3** review was left untouched. This
+corrects the unsupported compilation environment without claiming the exact historical Invalid
+Binary cause or approval. See the [build record](docs/RELEASE-4.json) and
+[supported release instructions](docs/SUPPORTED-RELEASE.md).
 
 ## For creators — installing it
 

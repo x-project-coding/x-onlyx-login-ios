@@ -1,0 +1,59 @@
+{
+  "source_commit": "5223dd4d0672164821e6e0d831f9504e260e5d9e",
+  "repository": "x-project-coding/x-onlyx-login-ios",
+  "workflow_run_id": "34033916804",
+  "workflow_run_attempt": "1",
+  "runner_image_version": "20260831.0337.3",
+  "developer_dir": "/Applications/Xcode_26.6.app/Contents/Developer",
+  "environment": {
+    "host_version": "26.6.2",
+    "host_build": "25G83",
+    "xcode_version": "26.6",
+    "xcode_build": "17F113",
+    "ios_sdk_version": "26.5",
+    "ios_sdk_build": "23F81a"
+  },
+  "xcodegen": {
+    "version": "Version: 2.46.0",
+    "url": "https://github.com/yonaskolb/XcodeGen/releases/download/2.46.0/xcodegen.zip",
+    "sha256": "4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806"
+  },
+  "configuration": "Release",
+  "archive_metadata": {
+    "CFBundleIdentifier": "ai.onlyx.login",
+    "CFBundleExecutable": "OnlyX Login",
+    "CFBundleVersion": "4",
+    "UIDeviceFamily": [
+      1
+    ],
+    "BuildMachineOSBuild": "25G83",
+    "DTXcodeBuild": "17F113",
+    "DTSDKName": "iphoneos26.5",
+    "DTSDKBuild": "23F81a",
+    "DTXcode": "2660",
+    "CFBundleShortVersionString": "1.0"
+  },
+  "api_base": "https://of-api.onlyx.ai",
+  "validation": {
+    "release_core_tests": 51,
+    "python_release_tool_tests": 24,
+    "compiled_api_override_check": "passed",
+    "independent_export_audit": "passed",
+    "apple_package_validation": "passed with no errors"
+  },
+  "archive_zip": "OnlyXLogin-4-unsigned.xcarchive.zip",
+  "archive_sha256": "c55497b786fd4c60988be4cb5a27ae5c2b9cf2059a9824ac021f327ee7b592d1",
+  "signing": "Verified local Apple Distribution signature, Store profile, explicit OnlyX default keychain group and debugger disabled; no Push or Sign in with Apple entitlements",
+  "app_id": "6808706039",
+  "version": "1.0",
+  "build": "4",
+  "workflow_url": "https://github.com/x-project-coding/x-onlyx-login-ios/actions/runs/34033916804",
+  "github_artifact_digest": "sha256:9af9f57237451bc0158cec9354acb52617e690091a009b0887e6da21543b14ac",
+  "store_ipa_sha256": "7fbca8c53f9281c913fd456ef133e4b0622fd068fb9a2bbf75aca145f18fd264",
+  "executable_dsym_uuid": "2E437493-2A37-37E3-BA1F-501A0F466E00",
+  "local_export_host": "macOS 27 beta (26A5421a), outside Xcode 26.6 supported host range; compilation used the recorded supported CI host",
+  "upload_state": "upload_succeeded_with_no_errors; processing_pending",
+  "production_review_state": "awaiting_account_holder_sign_in_to_select_and_submit_build_4",
+  "existing_testflight_build_3": "WAITING_FOR_BETA_REVIEW; not modified",
+  "scope": "Build/distribution workflow only; app runtime, API, connect scheme and camera/microphone usage descriptions unchanged. Historical Invalid Binary cause is not proven."
+}

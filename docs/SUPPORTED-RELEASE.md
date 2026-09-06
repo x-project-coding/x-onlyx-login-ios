@@ -2,13 +2,17 @@
 
 This is the reusable build, signing and upload procedure for bundle `ai.onlyx.login`, team `Y5NUN99S3X`, app/executable **OnlyX Login**. Run the examples from the repository root. Keep signing credentials, reviewer details and local upload records outside this public repository.
 
-At the September 6, 2026 handoff, the existing runtime is **1.0 (3)**. The operator reported App Store **Invalid Binary** and a separate TestFlight build 3 **Waiting for Review**. The precise rejection cause is unconfirmed. [PR #4](https://github.com/x-project-coding/x-onlyx-login-ios/pull/4) is merged and its supported-host build 4 is running; build 4 has not yet been recorded here as built, uploaded or submitted. Older [handoff](HANDOFF-MAC.md) and [beta metadata](TESTFLIGHT-METADATA.md) are historical context, not current approval evidence.
+The supported-host **1.0 (4)** archive, validation results and current handoff are recorded in
+[RELEASE-4.json](RELEASE-4.json). The original App Store Invalid Binary cause remains unconfirmed;
+this rebuild corrects its known unsupported compilation host. The separate TestFlight build 3
+review remains pending and was not modified. Older [handoff](HANDOFF-MAC.md) and
+[beta metadata](TESTFLIGHT-METADATA.md) are historical context, not current approval evidence.
 
 ## 1. Compile on the supported host
 
 The [manual workflow](../.github/workflows/release-archive.yml) uses `macos-26` and `/Applications/Xcode_26.6.app/Contents/Developer`. Its shared guard requires public macOS **26.2–26.x**, Xcode **26.6 (17F113)** and iOS SDK **26.5**. A stable Xcode installation on macOS 27 beta does not satisfy that host requirement. Never change `BuildMachineOSBuild`, Xcode or SDK metadata to bypass it. [Apple requirements](https://developer.apple.com/xcode/system-requirements/)
 
-After the reviewed workflow is available on the default branch, dispatch it against the reviewed branch or tag. Choose a positive build number unused in App Store Connect; **4** is the intended rebuild number at this handoff. Record the approved source commit independently before dispatching.
+After the reviewed workflow is available on the default branch, dispatch it against the reviewed branch or tag. Choose a positive build number unused in App Store Connect; **4** has now been uploaded and must not be reused. Record the approved source commit independently before dispatching.
 
 ```sh
 : "${ONLYX_SOURCE_REF:?Set the reviewed branch or tag}"
@@ -84,7 +88,7 @@ xcrun altool --validate-app "$ONLYX_IPA" \
   --output-format json > "$ONLYX_EXPORT_DIR/apple-validation.json"
 ```
 
-Inspect a successful validation result before performing the separately authorized upload:
+After inspecting a successful validation result, upload:
 
 ```sh
 xcrun altool --upload-package "$ONLYX_IPA" \
