@@ -9,9 +9,13 @@ It speaks the **same server contract** as the mac app — `POST /connect-app/ope
 /connect-app/session`, `GET /connect-app/status` on `of-api.onlyx.ai` — captures the **same jar**
 by the same rules, and uses the same words. Where iOS differs, the difference is written down below.
 
-**Status: v0 — the core is written and tested; the app target is written and compiles in CI; nobody
-has yet signed in through it on a real iPhone.** See PLAN.md for what is left and what needs an
-Apple account.
+**Release handoff, September 6, 2026:** replacement **1.0 (4)** was compiled on supported macOS
+26.6.2 with Xcode 26.6. Its 51 Release tests, signing/export checks and Apple package validation
+passed; Apple processed build 4 as **VALID and App Store eligible**. Selection/submission needs
+the account-holder sign-in. The existing **TestFlight build 3** review was left untouched. This
+corrects the unsupported compilation environment without claiming the exact historical Invalid
+Binary cause or approval. See the [build record](docs/RELEASE-4.json) and
+[supported release instructions](docs/SUPPORTED-RELEASE.md).
 
 ## For creators — installing it
 
@@ -103,14 +107,17 @@ creator is sent lives in `x-onlyx-ui` (`app/pages/connect/[token].vue`).
 
 ## Releasing
 
-Needs an Apple Developer account (the team), a bundle id (`ai.onlyx.login`), and a Mac with Xcode:
+Use [SUPPORTED-RELEASE.md](docs/SUPPORTED-RELEASE.md) for the manual unsigned CI archive, verified
+artifact download, local distribution signing/export, Apple validation/upload and review handoff.
+Compilation requires public macOS **26.2–26.x**, Xcode **26.6 (17F113)** and iOS SDK **26.5**.
+The existing macOS 27 beta host is not supported for this compilation; do not edit compiler
+metadata to disguise it. Signing keys remain local, and the CI archive preserves its real provenance.
 
-1. `xcodegen generate`, open the project, set the team, **Product → Archive**.
-2. Distribute → **TestFlight** (external testing): Apple reviews the first build (usually a day),
-   then the public TestFlight link is what managers send creators. Builds expire after 90 days;
-   ship a new one before that.
-3. The App Store is the long-term path and needs review of an app whose only job is signing in to
-   OnlyFans — plan for questions. TestFlight is the realistic first channel.
+Uploading a new build does not select or submit it for App Review. An Account Holder, Admin or
+App Manager performs those steps. Keep the pending TestFlight build 3 review intact unless a
+separate, necessary replacement is explicitly authorized. The older [Mac handoff](docs/HANDOFF-MAC.md)
+and [TestFlight metadata](docs/TESTFLIGHT-METADATA.md) describe earlier work; use the supported release
+procedure for this rebuild and confirm current statuses in App Store Connect.
 
 Universal Links (`https://app.onlyx.ai/connect/...` opening the app directly, tappable in every
 chat) need the team id in an `apple-app-site-association` file on app.onlyx.ai; until then the

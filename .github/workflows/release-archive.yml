@@ -29,10 +29,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Test archive packaging checks
-        run: |
-          python3 -m unittest discover -s scripts -p test_build_environment.py -v
-          python3 -m unittest discover -s scripts -p test_ci_release_archive.py -v
+      - name: Test release environment, packaging and local signing checks
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
 
       - name: Build an unsigned Release archive and record provenance
         run: python3 scripts/ci-release-archive.py
