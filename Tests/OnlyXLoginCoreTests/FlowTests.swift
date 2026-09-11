@@ -30,6 +30,13 @@ final class FlowTests: XCTestCase {
         XCTAssertEqual(ConnectFlow.disposition(for: open(tunnel: "wss://of-api.onlyx.ai/connect-app/tunnel")),
                        .tunnelUnsupported)
     }
+    func testNewBuildFailsClosedWithoutAMeasuredTunnel() {
+        XCTAssertEqual(ConnectFlow.disposition(for: open(tunnel: nil), supportsTunnel: true, requiresTunnel: true), .tunnelUnavailable)
+        XCTAssertEqual(ConnectFlow.disposition(for: open(tunnel: "wss://of-api.onlyx.ai/connect-app/tunnel"), supportsTunnel: true), .tunnelUnavailable)
+        let measured = OpenResponse(sessionToken: "tok", expiresAt: "e", account: .init(id: "a", username: "u", status: "connecting"),
+            identity: identity(source: "native"), tunnel: Tunnel(url: "wss://of-api.onlyx.ai/connect-app/tunnel", exitIp: "192.0.2.1"))
+        if case .signIn = ConnectFlow.disposition(for: measured, supportsTunnel: true, requiresTunnel: true) {} else { XCTFail("refused verified route") }
+    }
     func testCaptureGuards() {
         let me = SessionCapture.Me(id: "123", username: "delfi.1")
         XCTAssertTrue(ConnectFlow.shouldCapture(me: me, alreadyCaptured: false, capturing: false, refusedIds: []))

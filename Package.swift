@@ -12,9 +12,12 @@ let package = Package(
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "OnlyXLoginCore", targets: ["OnlyXLoginCore"]),
+        .library(name: "OnlyXLoginTunnel", targets: ["OnlyXLoginTunnel"]),
     ],
     targets: [
         .target(name: "OnlyXLoginCore"),
+        .target(name: "OnlyXLoginTunnel", dependencies: ["OnlyXLoginCore"]),
         .testTarget(name: "OnlyXLoginCoreTests", dependencies: ["OnlyXLoginCore"]),
+        .testTarget(name: "OnlyXLoginTunnelTests", dependencies: ["OnlyXLoginTunnel"]),
     ]
 )

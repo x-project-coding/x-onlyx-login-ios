@@ -3,6 +3,7 @@ import OSLog
 import SwiftUI
 import WebKit
 import OnlyXLoginCore
+import OnlyXLoginTunnel
 
 private let flowLog = Logger(subsystem: "ai.onlyx.login", category: "flow")
 
@@ -38,6 +39,9 @@ final class AppModel: ObservableObject {
         var refusedIds = Set<String>()
         var settleTask: Task<Void, Never>? = nil
         var pollTask: Task<Void, Never>? = nil
+        var forwarder: TunnelForwarder? = nil
+        var proxyEndpoint: TunnelEndpoint? = nil
+        var expectedExit: String? = nil
         init(id: Int) { self.id = id }
     }
 
@@ -51,7 +55,8 @@ final class AppModel: ObservableObject {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         api = OnlyxApi(base: base, transport: URLSessionTransport(),
                        appVersion: version,
-                       platform: NativeIdentity.platformTag(systemVersion: UIDevice.current.systemVersion))
+                       platform: NativeIdentity.platformTag(systemVersion: UIDevice.current.systemVersion),
+                       caps: ProxyRouting.caps(supported: true))
     }
 
     // MARK: entry points
@@ -87,6 +92,7 @@ final class AppModel: ObservableObject {
             previous.done = true
             previous.settleTask?.cancel()
             previous.pollTask?.cancel()
+            if let forwarder = previous.forwarder { Task { await forwarder.close() } }
         }
         signIn?.close()
         signIn = nil
@@ -97,6 +103,7 @@ final class AppModel: ObservableObject {
         r.done = true
         r.settleTask?.cancel()
         r.pollTask?.cancel()
+        if let forwarder = r.forwarder { Task { await forwarder.close() } }
         flowLog.error("run \(r.id) failed: \(message.title, privacy: .public)")
         signIn?.close()
         signIn = nil
@@ -124,17 +131,33 @@ final class AppModel: ObservableObject {
         r.expiresAt = opened.expiresAt
         flowLog.info("run \(r.id): pass opened (\(opened.identity.source ?? "seat", privacy: .public) identity, tunnel \(opened.tunnel?.url == nil ? "none" : "offered", privacy: .public))")
 
-        switch ConnectFlow.disposition(for: opened) {
+        switch ConnectFlow.disposition(for: opened, supportsTunnel: true, requiresTunnel: true) {
         case .tunnelUnsupported:
-            // The server asked for the sign-in to ride the account's proxy. The mac app runs a
-            // loopback forwarder for that; WKWebView cannot be given a per-view proxy, so the honest
-            // answer is to stop here rather than sign in over the wrong network.
             return fail(r, Messages.tunnelUnsupported)
+        case .tunnelUnavailable:
+            return fail(r, Messages.tunnelUnavailable)
         case .signIn:
             break
         }
 
-        let controller = SignInController(identity: opened.identity)
+        guard let tunnel = opened.tunnel, let rawUrl = tunnel.url, let exitIp = tunnel.exitIp,
+              let url = ProxyRouting.tunnelURL(rawUrl, apiBase: api.base) else {
+            return fail(r, Messages.tunnelUnavailable)
+        }
+        let forwarder = TunnelForwarder(url: url, token: opened.sessionToken) { [weak self] reason in
+            Task { @MainActor in self?.fail(r, Messages.forTunnel(reason)) }
+        }
+        r.forwarder = forwarder
+        let endpoint: TunnelEndpoint
+        do {
+            endpoint = try await forwarder.start()
+            guard !isStale(r) else { await forwarder.close(); return }
+            try await endpoint.verifyExit(expected: exitIp)
+        } catch { return fail(r, Messages.tunnelUnavailable) }
+        guard !isStale(r) else { await forwarder.close(); return }
+        r.proxyEndpoint = endpoint
+        r.expectedExit = exitIp
+        let controller = SignInController(identity: opened.identity, proxy: endpoint)
         controller.onMe = { [weak self] me in
             Task { @MainActor in self?.onMe(r, me) }
         }
@@ -205,6 +228,16 @@ final class AppModel: ObservableObject {
         }
 
         let payload = SessionCapture.buildSessionPayload(cookies: cookies, xbc: xbc)
+        let userAgent = await controller.readUserAgent()
+        guard !isStale(r) else { return }
+        // Recheck after the identity challenge: a rotating provider must not silently deliver a
+        // session from a different exit. The server independently rechecks before storing it.
+        guard let endpoint = r.proxyEndpoint, let expectedExit = r.expectedExit else {
+            return fail(r, Messages.tunnelUnavailable)
+        }
+        do { try await endpoint.verifyExit(expected: expectedExit) }
+        catch { return fail(r, Messages.forImport("proxy_changed")) }
+        guard !isStale(r) else { return }
         r.captured = true
         flowLog.info("run \(r.id): captured \(payload.cookies.count) cookies + device token")
         phase = .captured(username: r.account?.username)
@@ -212,7 +245,7 @@ final class AppModel: ObservableObject {
         guard let token = r.token else { return }
         let result: ImportResponse
         do {
-            result = try await api.importSession(token: token, ImportRequest(session: payload, ofUserId: me.id, username: me.username))
+            result = try await api.importSession(token: token, ImportRequest(session: payload, ofUserId: me.id, username: me.username, userAgent: userAgent))
         } catch let e as ApiError {
             guard !isStale(r) else { return }
             switch ConnectFlow.importOutcome(code: e.code) {
@@ -237,6 +270,9 @@ final class AppModel: ObservableObject {
         // The browser has done its job: close it, drop the jar, then watch the seat adopt it.
         signIn?.close()
         signIn = nil
+        await r.forwarder?.close()
+        r.forwarder = nil
+        guard !isStale(r) else { return }
         phase = .verifying(username: r.account?.username, seatState: nil)
         r.pollTask = Task { [weak self] in
             while let self, !Task.isCancelled {

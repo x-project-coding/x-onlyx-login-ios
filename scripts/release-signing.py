@@ -78,7 +78,7 @@ def provenance_errors(info, report):
 
 def app_errors(info):
     expected = {"CFBundleIdentifier": BUNDLE, "CFBundleExecutable": EXECUTABLE,
-                "UIDeviceFamily": [1], "MinimumOSVersion": "15.0", "ITSAppUsesNonExemptEncryption": False}
+                "UIDeviceFamily": [1], "MinimumOSVersion": "17.0", "ITSAppUsesNonExemptEncryption": False}
     errors = ["Unexpected release configuration: " + key for key, value in expected.items() if info.get(key) != value]
     schemes = [scheme for item in info.get("CFBundleURLTypes", []) for scheme in item.get("CFBundleURLSchemes", [])]
     if schemes != ["onlyx-connect"]:

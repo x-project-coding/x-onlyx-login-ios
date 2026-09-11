@@ -49,9 +49,9 @@ public enum Messages {
             detail: "Check your internet connection and open the link again."),
     ]
 
-    /// Tunnel close codes, mirrored from the API's tunnel.ts. This app does not ride a tunnel yet;
-    /// kept so the vocabulary matches the mac app if that changes.
+    /// Tunnel close codes, mirrored from the API's tunnel.ts.
     public static let tunnelClose: [Int: String] = [
+        4401: "unauthorized",
         4403: "target_refused", 4429: "too_many_streams", 4413: "byte_budget", 4407: "proxy_auth",
         4409: "proxy_blocked", 4502: "proxy_error", 4504: "connect_timeout", 4408: "idle",
     ]
@@ -94,9 +94,11 @@ public enum Messages {
         return UserMessage(title: "OnlyX could not use this sign-in", detail: detail)
     }
 
-    /// The iPhone app cannot ride a proxy tunnel yet. When the server offers one, this is the honest
-    /// dead-end rather than a silent half-sign-in. See README "What iOS cannot do".
+    public static let tunnelUnavailable = UserMessage(
+        title: "The account's secure connection is not ready",
+        detail: "OnlyX could not verify this account's sign-in connection. Try again in a minute, or ask your manager. No sign-in was sent over your phone's direct connection.")
+
     public static let tunnelUnsupported = UserMessage(
-        title: "This account needs a computer to sign in",
-        detail: "OnlyX is set to route this account's sign-in through its own connection, which the iPhone app cannot do yet. Ask your manager, or sign in on a Mac or Windows computer with the OnlyX Login app.")
+        title: "Update iOS to sign in securely",
+        detail: "The account's secure connection requires iOS 17 or newer. Update your iPhone, or ask your manager for help.")
 }

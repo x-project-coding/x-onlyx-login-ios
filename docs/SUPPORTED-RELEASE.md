@@ -2,11 +2,11 @@
 
 This is the reusable build, signing and upload procedure for bundle `ai.onlyx.login`, team `Y5NUN99S3X`, app/executable **OnlyX Login**. Run the examples from the repository root. Keep signing credentials, reviewer details and local upload records outside this public repository.
 
-The supported-host **1.0 (4)** archive, validation results and current handoff are recorded in
-[RELEASE-4.json](RELEASE-4.json). The original App Store Invalid Binary cause remains unconfirmed;
-this rebuild corrects its known unsupported compilation host. The separate TestFlight build 3
-review remains pending and was not modified. Older [handoff](HANDOFF-MAC.md) and
-[beta metadata](TESTFLIGHT-METADATA.md) are historical context, not current approval evidence.
+The historical supported-host **1.0 (4)** archive and validation results are recorded in
+[RELEASE-4.json](RELEASE-4.json). They are not current review-status evidence. The new **1.1**
+proxy candidate requires **iOS 17**, which the signing verifier now checks. Its deployment and
+real-device gates are in [PROXY-ROLLOUT.md](PROXY-ROLLOUT.md). Confirm Apple's current state before
+changing any build or tester group; no old review should be withdrawn merely for this update.
 
 ## 1. Compile on the supported host
 
