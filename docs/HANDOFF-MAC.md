@@ -126,5 +126,6 @@ Only after a device run has reached Connected at least once.
   `apps/api/src/modules/connect-app/`.
 - The API base is compiled in (`Config.apiBase`). A Debug build honours `ONLYX_API_BASE` from the
   scheme's environment for pointing at a test server; a Release build ignores it.
-- The three things iOS forces (native identity, the user-script observer, no tunnel) are explained
-  in README.md "What iOS cannot do". Do not "fix" them into the mac app's shape.
+- Historical correction: the original build had no tunnel, but iOS does not prohibit one.
+  iOS 17+ has public WebKit proxy configuration. The 1.1 candidate implements it; see
+  [PROXY-ROLLOUT.md](PROXY-ROLLOUT.md) for compatibility and verification gates.

@@ -23,6 +23,15 @@ final class FakeTransport: Transport, @unchecked Sendable {
 }
 
 final class ApiTests: XCTestCase {
+    func testMeasuredUserAgentIsAnAdditiveImportField() throws {
+        let session = SessionCapture.buildSessionPayload(cookies: [], xbc: nil)
+        let request = ImportRequest(session: session, ofUserId: "42", username: nil, userAgent: "measured iPhone UA")
+        let json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(request)) as! [String: Any]
+        XCTAssertEqual(json["userAgent"] as? String, "measured iPhone UA")
+        let legacy = ImportRequest(session: session, ofUserId: "42", username: nil)
+        let legacyJSON = try JSONSerialization.jsonObject(with: JSONEncoder().encode(legacy)) as! [String: Any]
+        XCTAssertNil(legacyJSON["userAgent"])
+    }
     private let openJson = """
     {"sessionToken":"tok-1","expiresAt":"2026-09-03T02:00:00Z",
      "account":{"id":"acct-1","username":"delfi.1","status":"connecting"},

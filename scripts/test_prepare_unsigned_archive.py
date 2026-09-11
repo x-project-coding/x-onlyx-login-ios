@@ -29,7 +29,7 @@ class PreparationTests(unittest.TestCase):
         self.info = {
             "CFBundleIdentifier": helper.BUNDLE, "CFBundleExecutable": "OnlyX Login", "UIDeviceFamily": [1],
             "CFBundleVersion": "4", "CFBundleShortVersionString": "1.0",
-            "MinimumOSVersion": "15.0", "ITSAppUsesNonExemptEncryption": False,
+            "MinimumOSVersion": "17.0", "ITSAppUsesNonExemptEncryption": False,
             "CFBundleURLTypes": [{"CFBundleURLSchemes": ["onlyx-connect"]}],
             "NSCameraUsageDescription": "Selfie verification.", "NSMicrophoneUsageDescription": "Identity video sound.",
             "BuildMachineOSBuild": "25F80", "DTXcode": "2660", "DTXcodeBuild": "17F113",

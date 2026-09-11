@@ -46,11 +46,13 @@ public struct Identity: Decodable, Sendable, Equatable {
 
 public struct Tunnel: Decodable, Sendable, Equatable {
     public let url: String?
+    public let exitIp: String?
+    public init(url: String?, exitIp: String? = nil) { self.url = url; self.exitIp = exitIp }
 }
 
 /// The opened pass: token, expiry, account, identity, and the server's routing decision. `tunnel`
 /// is `null` (its default on the estate) for a sign-in over the phone's own network; a non-null
-/// `tunnel.url` is a WebSocket forwarder the mac app rides and this app does not yet support.
+/// `tunnel.url` is the credential-scoped relay; iOS 17+ also requires a measured `exitIp`.
 public struct OpenResponse: Decodable, Sendable, Equatable {
     public let sessionToken: String
     public let expiresAt: String
@@ -92,8 +94,12 @@ public struct ImportRequest: Encodable, Sendable {
     public let session: SessionPayload
     public let ofUserId: String
     public let username: String?
-    public init(session: SessionPayload, ofUserId: String, username: String?) {
+    /// Measured from the actual sign-in view, not reconstructed from the OS version. Servers
+    /// that do not yet support source-identity capture ignore this additive field.
+    public let userAgent: String?
+    public init(session: SessionPayload, ofUserId: String, username: String?, userAgent: String? = nil) {
         self.session = session; self.ofUserId = ofUserId; self.username = username
+        self.userAgent = userAgent
     }
 }
 

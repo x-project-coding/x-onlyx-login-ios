@@ -4,6 +4,7 @@ import OSLog
 import SwiftUI
 import WebKit
 import OnlyXLoginCore
+import OnlyXLoginTunnel
 
 let log = Logger(subsystem: "ai.onlyx.login", category: "signin")
 
@@ -39,10 +40,13 @@ final class SignInController: NSObject, ObservableObject {
     private var closed = false
     private var cameraWarned = false
 
-    init(identity: Identity) {
+    init(identity: Identity, proxy: TunnelEndpoint) {
         let config = WKWebViewConfiguration()
         // Nothing outlives the run: cookies, storage and cache live as long as this store object.
         config.websiteDataStore = .nonPersistent()
+        // Configured BEFORE WKWebView construction or any page load. All frames and popups
+        // reuse this store; no direct-network failover is allowed.
+        config.websiteDataStore.proxyConfigurations = [proxy.configuration()]
         // The selfie check: OnlyFans' vendor uses getUserMedia in the page. Inline playback and no
         // user-gesture gate are what let its <video> preview run inside the page.
         config.allowsInlineMediaPlayback = true
@@ -73,6 +77,12 @@ final class SignInController: NSObject, ObservableObject {
 
     func load(_ url: URL) {
         webView.load(URLRequest(url: url))
+    }
+
+    func readUserAgent() async -> String? {
+        guard let ua = try? await webView.evaluateJavaScript("navigator.userAgent") as? String,
+              !ua.isEmpty, ua.utf8.count <= 512 else { return nil }
+        return ua
     }
 
     /// Stop everything and drop the store. The web view is released with this object.

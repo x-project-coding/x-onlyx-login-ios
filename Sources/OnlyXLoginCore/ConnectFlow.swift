@@ -19,10 +19,11 @@ public enum Phase: Equatable, Sendable {
 
 /// What `open` decided, reduced to what the flow acts on.
 public enum OpenDisposition: Equatable, Sendable {
-    /// Ready to sign in over the phone's own network — the estate default (`tunnel: null`).
+    /// The response meets this caller's routing requirements; the app still verifies its exit.
     case signIn(username: String, expiresAt: String, native: Bool)
-    /// The server offered a proxy tunnel this app cannot ride yet. An honest dead end.
+    /// The caller lacks WebKit proxy support (older OS/build).
     case tunnelUnsupported
+    case tunnelUnavailable
 }
 
 /// What to do after `POST /connect-app/session` returns.
@@ -37,11 +38,14 @@ public enum ImportOutcome: Equatable, Sendable {
 }
 
 public enum ConnectFlow {
-    /// Reduce an `open` response to the flow's disposition. A non-null tunnel URL is refused up
-    /// front, because the whole sign-in would otherwise run without the proxy the server asked for.
-    public static func disposition(for open: OpenResponse) -> OpenDisposition {
+    /// Reduce an open response without silently downgrading a required route. The defaults model
+    /// legacy callers; the 1.1 app explicitly requires a measured tunnel.
+    public static func disposition(for open: OpenResponse, supportsTunnel: Bool = false, requiresTunnel: Bool = false) -> OpenDisposition {
         if let url = open.tunnel?.url, !url.isEmpty {
-            return .tunnelUnsupported
+            if !supportsTunnel { return .tunnelUnsupported }
+            if open.tunnel?.exitIp?.isEmpty != false { return .tunnelUnavailable }
+        } else if requiresTunnel {
+            return .tunnelUnavailable
         }
         return .signIn(username: open.account.username,
                        expiresAt: open.expiresAt,

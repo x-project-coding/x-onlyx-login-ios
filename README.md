@@ -19,6 +19,9 @@ Binary cause or approval. See the [build record](docs/RELEASE-4.json) and
 
 ## For creators — installing it
 
+The proxy-capable **1.1** build requires **iOS 17 or later**. It is a release candidate; the
+existing TestFlight build is not changed by this source update. See [proxy rollout](docs/PROXY-ROLLOUT.md).
+
 Apps reach an iPhone only through Apple. This app is distributed with **TestFlight** (Apple's free
 beta app): your manager sends an invitation link; it installs TestFlight first, then OnlyX Login
 inside it. Open OnlyX Login once — after that your connect links open it by themselves.
@@ -46,9 +49,12 @@ Help is **inside the app** (the Help button), and it answers without a connectio
   the in-app-browser signature identity vendors treat as a different device class; the app adds
   exactly those tokens so the string is what her Safari sends. See below for why native is the
   only coherent option on iOS.
-- The sign-in uses **the phone's own internet connection**. OnlyFans' identity check runs on the
-  same device that signs in, so the desktop's "same network as the phone that scans the QR"
-  problem cannot arise here — the phone IS the device.
+- The new build routes the sign-in browser's HTTPS traffic through **the account's assigned
+  proxy**, using an authenticated local SOCKS5 bridge and the OnlyX encrypted WebSocket relay.
+  Proxy credentials stay on the server. The app checks the measured exit before sign-in and
+  before import; the server checks again before accepting the session. A missing/failed route
+  stops the sign-in rather than falling back to the phone's direct connection. The identity
+  check must stay inside this web view; an external browser or another device does not inherit it.
 - When OnlyFans confirms the sign-in (a `/users/me` answer naming her, with the login cookies in
   the jar), the app hands the session and the device token to OnlyX and closes the browser. OnlyX
   verifies it on its side; the app shows **Connected** when the seat says so, and nothing sooner.
@@ -69,7 +75,7 @@ every difference below follows from that.
 | `Network.responseReceived` watch on `/users/me` (touches nothing in the page) | a user script at document start wraps `fetch`/`XMLHttpRequest` in the main frame and posts **only** the `/users/me` answer to the native side. Visible to the page (`fetch.toString()`), same class of tell as the seat's own pins. See `MeObserver` for a script-free alternative via the `auth_id` cookie. |
 | `session.cookies.get` | `WKHTTPCookieStore.getAllCookies` — HttpOnly included, which `document.cookie` would not be |
 | `Runtime.evaluate` for `bcTokenSha` | `evaluateJavaScript` with the same expression |
-| a loopback CONNECT forwarder when the server offers a tunnel | **not supported**: WKWebView takes no per-view proxy. The server's default is `tunnel: null`; if it ever offers one, the app stops with an honest message rather than sign in over the wrong network. (A NetworkExtension packet tunnel could do it later; it is a separate, entitlement-gated piece of work.) |
+| a loopback CONNECT forwarder when the server offers a tunnel | **supported on iOS 17+** using public `WKWebsiteDataStore.proxyConfigurations`. A credential-protected loopback SOCKS5 bridge carries TLS through the existing WSS relay. No VPN entitlement or device-wide proxy is needed. `allowFailover = false`; the proxy is set before creating the web view. |
 | popups: load in place / optional real popup | `createWebViewWith` returns nil and loads an https target in place (a form POST body does not ride that load — WebKit does not carry it) |
 | `will-navigate` https-only guard, main frame only | `decidePolicyFor` is asked for every frame: the main frame is https-only; a sub-frame may also be `about:srcdoc`, `blob:` or `data:`, or the vendor's iframe blanks silently |
 | `render-process-gone` | `webViewWebContentProcessDidTerminate` |
@@ -78,13 +84,14 @@ every difference below follows from that.
 **The one thing this leaves for the server side.** The seat that resumes a desktop-app sign-in is
 the `mac` profile (`APP_DEVICE_PROFILE` in x-onlyfans). An iPhone sign-in resumed by a Mac seat is
 a larger declared-device delta (iOS → macOS) than the mac app's. The app sends `platform: ios-<ver>`
-with every claim so the estate can see and measure iPhone sign-ins; closing the delta needs an
-iPhone seat profile in x-onlyfans, which is a server change, not an app one.
+with every claim and the measured `userAgent` with each import. Matching the exit does not itself
+solve this engine/device difference. The separate server identity change and a fresh creator
+sign-in must be verified before claiming end-to-end success.
 
 ## For developers
 
 ```
-swift test                                  # the core, on Linux or macOS (43 tests, no simulator)
+swift test                                  # core everywhere; socket tests on Apple platforms
 docker run --rm -v "$PWD":/src -w /src swift:6.0-noble swift test    # the same, on a box without Swift
 brew install xcodegen && xcodegen generate  # writes OnlyXLogin.xcodeproj (not committed)
 open OnlyXLogin.xcodeproj                   # set your team under Signing & Capabilities, run on a device
@@ -96,6 +103,7 @@ ignores it.
 | file | role |
 | --- | --- |
 | `Sources/OnlyXLoginCore/` | **Foundation-only, Linux-tested.** Deep link, API models + client (injectable transport), capture rules, the `/users/me` observer script, native identity, the messages, and the flow's decisions (`ConnectFlow`). |
+| `Sources/OnlyXLoginTunnel/` | Apple Network / URLSession loopback relay, bounded streams, local authentication and fail-closed proxy/exit checks. Compiled only where Network.framework is available. |
 | `Sources/OnlyXLoginApp/AppModel.swift` | the run: open → sign-in → capture → import → verify, with the timers and the stale-run guards |
 | `Sources/OnlyXLoginApp/SignInWebView.swift` | the WKWebView: in-memory store, user scripts, cookie read, camera grant, https-only, popups |
 | `Sources/OnlyXLoginApp/ContentView.swift` | the screens, in the mac app's words and colours; Help |
