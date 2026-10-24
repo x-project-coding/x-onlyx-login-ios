@@ -94,7 +94,7 @@ def check_archive(source, report):
         raise ValueError("Archive build number must be a positive integer.")
     metadata = plistlib.loads((source / "Info.plist").read_bytes())
     properties = metadata.get("ApplicationProperties", {})
-    if properties.get("ApplicationPath") != "Applications/OnlyX Login.app" or metadata.get("Distributions"):
+    if properties.get("ApplicationPath") != f"Applications/{EXECUTABLE}.app" or metadata.get("Distributions"):
         raise ValueError("Expected an undistributed OnlyX Login application archive.")
     for key in ("CFBundleIdentifier", "CFBundleVersion", "CFBundleShortVersionString"):
         if not info.get(key) or properties.get(key) != info[key]:

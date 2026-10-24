@@ -13,9 +13,10 @@ import subprocess
 import tempfile
 
 TEAM = "Y5NUN99S3X"
-BUNDLE = "ai.onlyx.login"
-EXECUTABLE = "OnlyX Login"
-APP_PATH = Path("Products/Applications/OnlyX Login.app")
+PRODUCT = runpy.run_path(str(Path(__file__).with_name("release-product.py")))["PRODUCT"]
+BUNDLE = PRODUCT["bundle"]
+EXECUTABLE = PRODUCT["name"]
+APP_PATH = Path(f"Products/Applications/{EXECUTABLE}.app")
 ENTITLEMENTS = {
     "application-identifier": TEAM + "." + BUNDLE,
     "com.apple.developer.team-identifier": TEAM,
@@ -81,8 +82,8 @@ def app_errors(info):
                 "UIDeviceFamily": [1], "MinimumOSVersion": "17.0", "ITSAppUsesNonExemptEncryption": False}
     errors = ["Unexpected release configuration: " + key for key, value in expected.items() if info.get(key) != value]
     schemes = [scheme for item in info.get("CFBundleURLTypes", []) for scheme in item.get("CFBundleURLSchemes", [])]
-    if schemes != ["onlyx-connect"]:
-        errors.append("The onlyx-connect URL scheme must be preserved.")
+    if schemes != [PRODUCT["url_scheme"]]:
+        errors.append("The selected product URL scheme must be preserved.")
     if not all(isinstance(info.get(key), str) and info[key].strip() for key in ("NSCameraUsageDescription", "NSMicrophoneUsageDescription")):
         errors.append("Camera and microphone usage descriptions are required.")
     if info.get("NSAppTransportSecurity"):

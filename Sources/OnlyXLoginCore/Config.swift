@@ -12,7 +12,11 @@ public enum Config {
     public static let apiBase = "https://of-api.onlyx.ai"
 
     /// The custom URL scheme a connect link uses: `onlyx-connect://open?c=<claim>`.
-    public static let scheme = "onlyx-connect"
+    public static let isWhiteLabel = Bundle.main.bundleIdentifier == "ai.onlyx.whitelabel.login"
+    public static let scheme = isWhiteLabel ? "secure-connect" : "onlyx-connect"
+    public static let appName = isWhiteLabel ? "Login" : "OnlyX Login"
+    public static let workspaceName = isWhiteLabel ? "your workspace" : "OnlyX"
+    public static let workspaceSubject = isWhiteLabel ? "Your workspace" : "OnlyX"
 
     /// Help lives inside the app, never behind a link — `onlyx.ai/connect-app` 404s, so a stuck
     /// creator with no connection still needs an answer she can read.

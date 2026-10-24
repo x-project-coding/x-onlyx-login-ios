@@ -17,14 +17,14 @@ public enum DeepLink {
     }
 
     /// The claim inside a deep link, or nil when the string is not one of ours.
-    public static func parse(_ raw: String) -> String? {
+    public static func parse(_ raw: String, scheme: String = Config.scheme) -> String? {
         // Trim whitespace and a single layer of wrapping quotes, as the shell sometimes adds.
         var text = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         if text.count >= 2, let first = text.first, let last = text.last,
            (first == "\"" || first == "'"), first == last {
             text = String(text.dropFirst().dropLast())
         }
-        guard text.lowercased().hasPrefix("\(Config.scheme):") else { return nil }
+        guard text.lowercased().hasPrefix("\(scheme):") else { return nil }
         guard let comps = URLComponents(string: text) else { return nil }
         // `onlyx-connect://open?c=` parses with host "open"; `onlyx-connect:open?c=` with path "open".
         let hostOrPath = comps.host ?? comps.path

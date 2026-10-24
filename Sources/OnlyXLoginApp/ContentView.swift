@@ -33,21 +33,33 @@ enum Brand {
     static let warn = Color(red: 0xfb / 255, green: 0xbf / 255, blue: 0x24 / 255)
 }
 
-/// The OnlyX mark: a dark disc with a blue ring.
+/// The shared Login app uses a neutral symbol; OnlyX uses its approved supplied artwork.
 struct Mark: View {
     var size: CGFloat = 22
     var body: some View {
-        Circle().fill(Color(red: 0x09 / 255, green: 0x09 / 255, blue: 0x0b / 255))
-            .overlay(Circle().strokeBorder(Brand.blue, lineWidth: size * 0.11))
-            .frame(width: size, height: size)
+        Group {
+            if Config.isWhiteLabel {
+                Image(systemName: "arrow.right.to.line")
+                    .font(.system(size: size * 0.62, weight: .semibold))
+                    .foregroundColor(Brand.blue)
+            } else {
+                Image("OnlyXMark").resizable().scaledToFit()
+            }
+        }.frame(width: size, height: size)
     }
 }
 
 struct BrandRow: View {
     var body: some View {
         HStack(spacing: 9) {
-            Mark()
-            Text("OnlyX Login").font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text)
+            if Config.isWhiteLabel {
+                Mark()
+                Text(Config.appName).font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text)
+            } else {
+                Image("OnlyXWordmark").resizable().scaledToFit()
+                    .frame(width: 112, height: 28).accessibilityLabel("OnlyX")
+                Text("Login").font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text)
+            }
         }
     }
 }
@@ -111,11 +123,11 @@ struct FullScreen: View {
     private var text: String {
         switch phase {
         case .idle:
-            return "This app connects your OnlyFans account to OnlyX. Open the chat where your manager sent your connect link and tap it — or copy the link and paste it here."
+            return "This app connects your OnlyFans account to \(Config.workspaceName). Open the chat where your manager sent your connect link and tap it — or copy the link and paste it here."
         case .opening: return "Setting up a private connection for your account."
-        case .captured: return "Sending your sign-in to OnlyX…"
-        case .verifying: return "OnlyX is taking over the session for \(who). This usually takes under a minute."
-        case .success: return "\(who) is now connected to OnlyX. You can close this app."
+        case .captured: return "Sending your sign-in to \(Config.workspaceName)…"
+        case .verifying: return "\(Config.workspaceSubject) is taking over the session for \(who). This usually takes under a minute."
+        case .success: return "\(who) is now connected to \(Config.workspaceName). You can close this app."
         case .error(let m, _): return m.detail
         case .signin: return ""
         }
@@ -123,7 +135,7 @@ struct FullScreen: View {
 
     private var detail: String? {
         switch phase {
-        case .idle: return "No link? Ask your manager for one. OnlyX Login only needs to stay installed, not open."
+        case .idle: return "No link? Ask your manager for one. \(Config.appName) only needs to stay installed, not open."
         case .verifying: return "Please keep the app open."
         default: return nil
         }
@@ -255,16 +267,16 @@ struct HelpSheet: View {
 
     static let entries: [(String, String)] = [
         ("Nothing happened when I tapped my link",
-         "Some chat apps do not open app links directly. Press and hold the link, choose Copy, open OnlyX Login and tap “Paste your link”."),
+         "Some chat apps do not open app links directly. Press and hold the link, choose Copy, open \(Config.appName) and tap “Paste your link”."),
         ("How do I install the app?",
-         "Your manager sends an invitation link. It installs Apple's TestFlight app first (free), then OnlyX Login inside it. Open OnlyX Login once; after that your connect links open it by themselves."),
+         "Your manager sends an invitation link. It installs Apple's TestFlight app first (free), then \(Config.appName) inside it. Open \(Config.appName) once; after that your connect links open it by themselves."),
         ("My link says it has expired",
          "Links work once, and for 15 minutes. Ask your manager to send a new one — it takes them a second."),
         ("I signed in to the wrong account",
          "Sign out inside the sign-in screen and sign in again with the account your manager is expecting. You do not need a new link."),
         ("OnlyFans is asking for a selfie or a video check",
-         "That is normal. Allow the camera when your iPhone asks, hold the phone up to your face, and follow OnlyFans' instructions. Nothing is recorded by OnlyX. If you refused the camera earlier: Settings › OnlyX Login › Camera, switch it on, then open your link again."),
-        ("It says it cannot reach OnlyX",
+         "That is normal. Allow the camera when your iPhone asks, hold the phone up to your face, and follow OnlyFans' instructions. This app does not record the check. If you refused the camera earlier: Settings › \(Config.appName) › Camera, switch it on, then open your link again."),
+        ("It says it cannot reach \(Config.workspaceName)",
          "Check your internet connection and open the link again. If it keeps happening, tell your manager."),
     ]
 
@@ -277,7 +289,7 @@ struct HelpSheet: View {
                         Text(a).font(.system(size: 14)).foregroundColor(Brand.muted)
                     }.padding(.vertical, 4).listRowBackground(Brand.panel)
                 }
-                Text("Still stuck? Tell your manager, or write to \(Config.supportEmail)")
+                Text(Config.isWhiteLabel ? "Still stuck? Contact the manager who sent your link." : "Still stuck? Tell your manager, or write to \(Config.supportEmail)")
                     .font(.system(size: 12)).foregroundColor(Brand.muted).listRowBackground(Brand.canvas)
             }
             .listStyle(.insetGrouped)
