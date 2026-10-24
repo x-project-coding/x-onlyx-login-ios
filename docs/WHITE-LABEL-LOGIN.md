@@ -26,3 +26,27 @@ must be wired to that mobile handoff before customer rollout.
 
 Build upload, Apple processing, external beta approval and a real-device creator sign-in are
 separate checks. Record each accurately; none implies the others.
+
+## TestFlight release, 2026-10-24
+
+- Listing: **Login: Creator Connect** (Apple's plain `Login` name was unavailable).
+- Home-screen name: **Login**. App Store Connect ID: `6826637909`.
+- Version 1.0 (1), source `cfdc91e2e1e6f43c4d6bc148116387dc84b215b8`.
+- Supported-host release workflow: [40117251713](https://github.com/x-project-coding/x-onlyx-login-ios/actions/runs/40117251713), passed.
+- Apple package validation and upload succeeded; processing state `VALID`.
+- `Login Internal`: build 1.0 (1), `Ready to Test`; no testers added yet.
+- `Login Beta`: external group created; build submission is pending reviewer contact and designated demo access. No public installer link is active.
+- A fresh physical-iPhone creator sign-in, identity check and session transfer remain unverified for this flavor.
+
+The tenant API handoff is [API #1010](https://github.com/x-project-coding/x-onlyx-api/pull/1010);
+the web handoff is tracked in the white-label iOS branch of x-onlyx-ui. Their customer rollout
+remains disabled until an approved, joinable TestFlight URL is configured.
+
+Beta description: Login connects a creator's own OnlyFans account to their authorized workspace.
+Use the one-time sign-in link provided by your manager, sign in in the private browser, complete
+any requested identity check, and wait for Connected. Local browser data is discarded at the end.
+Feedback: support@onlyx.ai.
+
+What to test: open or paste a designated one-time link, complete OnlyFans sign-in and any identity
+check, and verify Connected. Check invalid/expired links and cancel/retry. Use only an authorized
+demo creator account. Keep reviewer contact details and credentials in App Store Connect only.
