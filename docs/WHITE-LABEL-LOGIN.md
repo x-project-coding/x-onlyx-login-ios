@@ -31,15 +31,15 @@ separate checks. Record each accurately; none implies the others.
 
 - Listing: **Login: Creator Connect** (Apple's plain `Login` name was unavailable).
 - Home-screen name: **Login**. App Store Connect ID: `6826637909`.
-- Version 1.0 (1), source `cfdc91e2e1e6f43c4d6bc148116387dc84b215b8`.
-- Supported-host release workflow: [40117251713](https://github.com/x-project-coding/x-onlyx-login-ios/actions/runs/40117251713), passed.
+- Version 1.0 (2), source `ec11fbb2cdee945fc4f5527bb976307d91d4646d`.
+- Supported-host release workflow: [40119292586](https://github.com/x-project-coding/x-onlyx-login-ios/actions/runs/40119292586), passed.
 - Apple package validation and upload succeeded; processing state `VALID`.
-- `Login Internal`: build 1.0 (1), `Ready to Test`; no testers added yet.
+- `Login Internal`: build 1.0 (2), `Ready to Test`; no testers added yet.
 - `Login Beta`: external group created; build submission is pending reviewer contact and designated demo access. No public installer link is active.
 - A fresh physical-iPhone creator sign-in, identity check and session transfer remain unverified for this flavor.
 
 The tenant API handoff is [API #1010](https://github.com/x-project-coding/x-onlyx-api/pull/1010);
-the web handoff is tracked in the white-label iOS branch of x-onlyx-ui. Their customer rollout
+the web handoff is [UI #537](https://github.com/x-project-coding/x-onlyx-ui/pull/537). Their customer rollout
 remains disabled until an approved, joinable TestFlight URL is configured.
 
 Beta description: Login connects a creator's own OnlyFans account to their authorized workspace.
@@ -50,3 +50,5 @@ Feedback: support@onlyx.ai.
 What to test: open or paste a designated one-time link, complete OnlyFans sign-in and any identity
 check, and verify Connected. Check invalid/expired links and cancel/retry. Use only an authorized
 demo creator account. Keep reviewer contact details and credentials in App Store Connect only.
+
+Build 2 replaces the initially uploaded build 1 to correct a blank app icon. The exported IPA icon was decoded and visually checked before upload; app behavior is unchanged.
