@@ -35,7 +35,7 @@ separate checks. Record each accurately; none implies the others.
 - Supported-host release workflow: [40119292586](https://github.com/x-project-coding/x-onlyx-login-ios/actions/runs/40119292586), passed.
 - Apple package validation and upload succeeded; processing state `VALID`.
 - `Login Internal`: build 1.0 (2), `Ready to Test`; no testers added yet.
-- `Login Beta`: external group created; build submission is pending reviewer contact and designated demo access. No public installer link is active.
+- `Login Beta`: build 1.0 (2) submitted for external beta review on 2026-10-25; status `Waiting for Review`. The public invitation exists but cannot accept testers until Apple approves a build.
 - A fresh physical-iPhone creator sign-in, identity check and session transfer remain unverified for this flavor.
 
 The tenant API handoff is [API #1010](https://github.com/x-project-coding/x-onlyx-api/pull/1010);
@@ -58,5 +58,12 @@ Build 2 replaces the initially uploaded build 1 to correct a blank app icon. The
 Public invitation: https://testflight.apple.com/join/9vJx65k6 (`Login Beta`, open to anyone,
 no group-specific tester limit). The public link is enabled, but no external build is approved
 and the public page currently says the beta is not accepting testers. Do not enable this URL in
-production until Apple approval and a verified iPhone connection. The user chose to enter a new
-review contact directly in Apple rather than reuse the OnlyX Login contact.
+production until Apple approval and a verified iPhone connection.
+
+Build 1.0 (2) was submitted on 2026-10-25 at 08:21:03 UTC. App Store Connect shows
+`Waiting for Review`; the API confirms `WAITING_FOR_BETA_REVIEW` and a review submission
+with `WAITING_FOR_REVIEW`. The review contact was copied from OnlyX Login with the owner's
+authorization and is stored only in App Store Connect. Review notes explain that Login has no
+separate account and that a full creator connection test requires a designated creator account
+and a fresh one-time connection link, to be arranged with the review contact. No reusable demo
+credentials were supplied. Automatic tester notification is enabled for this build.
