@@ -172,7 +172,7 @@ final class AppModel: ObservableObject {
                 guard let self, !self.isStale(r) else { return }
                 self.phase = .signin(username: r.account?.username, expiresAt: r.expiresAt, notice: UserMessage(
                     title: "Your iPhone is blocking the camera for this app",
-                    detail: "Open Settings › OnlyX Login › Camera, switch it on, then open your link again."))
+                    detail: "Open Settings › \(Config.appName) › Camera, switch it on, then open your link again."))
             }
         }
         signIn = controller

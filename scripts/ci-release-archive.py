@@ -12,10 +12,13 @@ import os
 from pathlib import Path
 import plistlib
 import re
+import runpy
 import subprocess
 import sys
 import tempfile
 
+
+PRODUCT = runpy.run_path(str(Path(__file__).with_name("release-product.py")))["PRODUCT"]
 
 API_URL = "https://of-api.onlyx.ai"
 XCODEGEN_URL = "https://github.com/yonaskolb/XcodeGen/releases/download/2.46.0/xcodegen.zip"
@@ -42,12 +45,12 @@ def run(*args, capture=False):
 
 def archive_metadata(archive, build_number, environment):
     """Verify compiler provenance without modifying any archive contents."""
-    app = archive / "Products/Applications/OnlyX Login.app"
+    app = archive / f"Products/Applications/{PRODUCT['name']}.app"
     with (app / "Info.plist").open("rb") as stream:
         info = plistlib.load(stream)
     expected = {
-        "CFBundleIdentifier": "ai.onlyx.login",
-        "CFBundleExecutable": "OnlyX Login",
+        "CFBundleIdentifier": PRODUCT["bundle"],
+        "CFBundleExecutable": PRODUCT["name"],
         "CFBundleVersion": build_number,
         "UIDeviceFamily": [1],
         "BuildMachineOSBuild": environment["host_build"],
@@ -60,7 +63,7 @@ def archive_metadata(archive, build_number, environment):
             raise ValueError(f"Archive {key} does not match the requested release/environment.")
     with (archive / "Info.plist").open("rb") as stream:
         archive_info = plistlib.load(stream)
-    if archive_info.get("ApplicationProperties", {}).get("ApplicationPath") != "Applications/OnlyX Login.app":
+    if archive_info.get("ApplicationProperties", {}).get("ApplicationPath") != f"Applications/{PRODUCT['name']}.app":
         raise ValueError("Xcode did not produce the expected iOS application archive.")
     if (app / "embedded.mobileprovision").exists() or (app / "_CodeSignature").exists():
         raise ValueError("This job must produce an unsigned archive without provisioning material.")
@@ -111,7 +114,7 @@ def main():
     output = repository / "build/ci-release"
     output.mkdir(parents=True, exist_ok=False)
     (output / "build-environment.json").write_text(json.dumps(report, indent=2) + "\n")
-    archive = repository / "build" / f"OnlyXLogin-{build_number}-unsigned.xcarchive"
+    archive = repository / "build" / f"{PRODUCT['scheme']}-{build_number}-unsigned.xcarchive"
     if archive.exists() or archive.is_symlink():
         raise ValueError("Refusing to overwrite an existing archive.")
     with tempfile.TemporaryDirectory(prefix="onlyx-login-xcodegen-", dir=os.environ.get("RUNNER_TEMP")) as directory:
@@ -125,7 +128,7 @@ def main():
         xcodegen = tool_dir / "xcodegen/bin/xcodegen"
         xcodegen_version = run(str(xcodegen), "--version", capture=True).strip()
         run(str(xcodegen), "generate")
-    run("xcodebuild", "-project", "OnlyXLogin.xcodeproj", "-scheme", "OnlyXLogin", "-configuration", "Release",
+    run("xcodebuild", "-project", "OnlyXLogin.xcodeproj", "-scheme", PRODUCT["scheme"], "-configuration", "Release",
         "-destination", "generic/platform=iOS", "-archivePath", str(archive),
         "-derivedDataPath", str(repository / "build/ci-derived-data"),
         f"CURRENT_PROJECT_VERSION={build_number}",

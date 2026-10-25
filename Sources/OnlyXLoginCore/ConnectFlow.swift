@@ -99,7 +99,7 @@ public enum ConnectFlow {
         if error.status == 401 || error.code == "pass_invalid" {
             return .error(UserMessage(
                 title: "Still connecting",
-                detail: "Your sign-in was received. OnlyX is finishing the connection in the background — your manager will see the result."),
+                detail: "Your sign-in was received. \(Config.workspaceName) is finishing the connection in the background — your manager will see the result."),
                 username: username)
         }
         return nil

@@ -34,6 +34,13 @@ final class DeepLinkTests: XCTestCase {
         XCTAssertNotNil(DeepLink.parse("onlyx-connect://open?c=\(String(repeating: "a", count: 512))"))
         XCTAssertNil(DeepLink.parse("onlyx-connect://open?c=\(String(repeating: "a", count: 513))"))
     }
+    func testWhiteLabelLinksStaySeparateFromOnlyX() {
+        let claim = "abcd1234abcd"
+        XCTAssertEqual(DeepLink.parse("secure-connect://open?c=\(claim)", scheme: "secure-connect"), claim)
+        XCTAssertNil(DeepLink.parse("onlyx-connect://open?c=\(claim)", scheme: "secure-connect"))
+        XCTAssertNil(DeepLink.parse("secure-connect://open?c=\(claim)", scheme: "onlyx-connect"))
+        XCTAssertNil(DeepLink.parse("secure-connect://open?c=short", scheme: "secure-connect"))
+    }
     func testConfigOverrideOnlyInDebugBuild() {
         XCTAssertEqual(Config.resolveApiBase(packaged: true, override: "https://evil.test"), Config.apiBase)
         XCTAssertEqual(Config.resolveApiBase(packaged: false, override: "https://dev.test/"), "https://dev.test")

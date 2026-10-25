@@ -18,10 +18,10 @@ public enum Messages {
             detail: "Links work once and for 15 minutes. \(askForNewLink)"),
         "claim_required": .init(title: "This link is not complete", detail: askForNewLink),
         "account_unavailable": .init(title: "This account cannot be connected right now",
-            detail: "Your manager needs to check the account in OnlyX before you sign in."),
-        "no_egress": .init(title: "OnlyX is not ready for this account yet",
+            detail: "Your manager needs to check the account in \(Config.workspaceName) before you sign in."),
+        "no_egress": .init(title: "\(Config.workspaceSubject) is not ready for this account yet",
             detail: "Please try the link again in a minute. If it keeps happening, tell your manager."),
-        "worker_not_ready": .init(title: "OnlyX is not ready for this account yet",
+        "worker_not_ready": .init(title: "\(Config.workspaceSubject) is not ready for this account yet",
             detail: "Please try the link again in a minute. If it keeps happening, tell your manager."),
     ]
 
@@ -37,15 +37,15 @@ public enum Messages {
         "proxy_changed": .init(title: "The connection changed while you were signing in",
             detail: "Please sign in again. \(askForNewLink)"),
         "account_unavailable": .init(title: "This account cannot be connected right now",
-            detail: "Your manager needs to check the account in OnlyX before you sign in."),
+            detail: "Your manager needs to check the account in \(Config.workspaceName) before you sign in."),
         "already_imported": .init(title: "You are already signed in",
-            detail: "This link was used to sign in already. If OnlyX still shows the account as disconnected, ask for a new link."),
+            detail: "This link was used to sign in already. If \(Config.workspaceName) still shows the account as disconnected, ask for a new link."),
     ]
 
     static let transport: [String: UserMessage] = [
-        "unreachable": .init(title: "Cannot reach OnlyX",
+        "unreachable": .init(title: "Cannot reach \(Config.workspaceName)",
             detail: "Check your internet connection and open the link again."),
-        "timeout": .init(title: "OnlyX is not answering",
+        "timeout": .init(title: "\(Config.workspaceSubject) is not answering",
             detail: "Check your internet connection and open the link again."),
     ]
 
@@ -58,9 +58,9 @@ public enum Messages {
 
     static let tunnelFailures: [String: UserMessage] = [
         "proxy_auth": .init(title: "The secure connection was refused",
-            detail: "OnlyX could not open the connection for this account. Tell your manager — nothing is wrong on your side."),
+            detail: "\(Config.workspaceSubject) could not open the connection for this account. Tell your manager — nothing is wrong on your side."),
         "proxy_blocked": .init(title: "The secure connection was blocked",
-            detail: "OnlyX could not open the connection for this account. Tell your manager — nothing is wrong on your side."),
+            detail: "\(Config.workspaceSubject) could not open the connection for this account. Tell your manager — nothing is wrong on your side."),
         "proxy_error": .init(title: "The secure connection dropped",
             detail: "Please open the link again. If it keeps happening, tell your manager."),
         "connect_timeout": .init(title: "The secure connection timed out",
@@ -87,16 +87,16 @@ public enum Messages {
     public static func forFailedConnect(_ statusReason: String?) -> UserMessage {
         let detail: String
         if let r = statusReason, !r.isEmpty {
-            detail = "OnlyFans did not accept the session on OnlyX (\(r)). Open a new link and sign in again."
+            detail = "OnlyFans did not accept the session on \(Config.workspaceName) (\(r)). Open a new link and sign in again."
         } else {
-            detail = "OnlyFans did not accept the session on OnlyX. Open a new link and sign in again."
+            detail = "OnlyFans did not accept the session on \(Config.workspaceName). Open a new link and sign in again."
         }
-        return UserMessage(title: "OnlyX could not use this sign-in", detail: detail)
+        return UserMessage(title: "\(Config.workspaceSubject) could not use this sign-in", detail: detail)
     }
 
     public static let tunnelUnavailable = UserMessage(
         title: "The account's secure connection is not ready",
-        detail: "OnlyX could not verify this account's sign-in connection. Try again in a minute, or ask your manager. No sign-in was sent over your phone's direct connection.")
+        detail: "\(Config.workspaceSubject) could not verify this account's sign-in connection. Try again in a minute, or ask your manager. No sign-in was sent over your phone's direct connection.")
 
     public static let tunnelUnsupported = UserMessage(
         title: "Update iOS to sign in securely",

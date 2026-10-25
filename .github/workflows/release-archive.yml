@@ -3,6 +3,12 @@ name: Supported-host unsigned release archive
 on:
   workflow_dispatch:
     inputs:
+      product:
+        description: 'App to archive'
+        type: choice
+        options: [onlyx, white-label]
+        default: onlyx
+        required: true
       build_number:
         description: 'Unused positive App Store build number (4 for the current rebuild)'
         required: true
@@ -22,6 +28,7 @@ jobs:
     env:
       # Explicit stable Xcode; never use the runner's mutable default selection.
       DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      LOGIN_PRODUCT: ${{ inputs.product }}
       ONLYX_BUILD_NUMBER: ${{ inputs.build_number }}
     steps:
       - name: Check out the dispatched commit
@@ -30,7 +37,7 @@ jobs:
           persist-credentials: false
 
       - name: Test release environment, packaging and local signing checks
-        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+        run: LOGIN_PRODUCT=onlyx python3 -m unittest discover -s scripts -p 'test_*.py' -v
 
       - name: Build an unsigned Release archive and record provenance
         run: python3 scripts/ci-release-archive.py
@@ -38,7 +45,7 @@ jobs:
       - name: Preserve the archive ZIP and verification records
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: OnlyXLogin-${{ inputs.build_number }}-unsigned-${{ github.run_id }}-${{ github.run_attempt }}
+          name: ${{ inputs.product == 'white-label' && 'WhiteLabelLogin' || 'OnlyXLogin' }}-${{ inputs.build_number }}-unsigned-${{ github.run_id }}-${{ github.run_attempt }}
           path: build/ci-release/*
           if-no-files-found: error
           compression-level: 0
