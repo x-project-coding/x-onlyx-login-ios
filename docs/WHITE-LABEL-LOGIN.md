@@ -52,3 +52,11 @@ check, and verify Connected. Check invalid/expired links and cancel/retry. Use o
 demo creator account. Keep reviewer contact details and credentials in App Store Connect only.
 
 Build 2 replaces the initially uploaded build 1 to correct a blank app icon. The exported IPA icon was decoded and visually checked before upload; app behavior is unchanged.
+
+## Public-link setup, 2026-10-25
+
+Public invitation: https://testflight.apple.com/join/9vJx65k6 (`Login Beta`, open to anyone,
+no group-specific tester limit). The public link is enabled, but no external build is approved
+and the public page currently says the beta is not accepting testers. Do not enable this URL in
+production until Apple approval and a verified iPhone connection. The user chose to enter a new
+review contact directly in Apple rather than reuse the OnlyX Login contact.
