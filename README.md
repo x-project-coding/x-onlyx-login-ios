@@ -1,7 +1,7 @@
-# OnlyX Login for iPhone
+# Onlyx Login for iPhone
 
-The iPhone counterpart of [OnlyX Login](https://github.com/x-project-coding/x-onlyx-login) (macOS /
-Windows): a small app a creator opens **from a link** to sign in to OnlyFans for her OnlyX-managed
+The iPhone counterpart of [Onlyx Login](https://github.com/x-project-coding/x-onlyx-login) (macOS /
+Windows): a small app a creator opens **from a link** to sign in to OnlyFans for her Onlyx-managed
 account, on the phone she actually has. Nothing to set up, no account to create: tap the link, sign
 in, pass the selfie check with the phone's own camera, see **Connected**, close the app.
 
@@ -23,13 +23,13 @@ The proxy-capable **1.1** build requires **iOS 17 or later**. It is a release ca
 existing TestFlight build is not changed by this source update. See [proxy rollout](docs/PROXY-ROLLOUT.md).
 
 Apps reach an iPhone only through Apple. This app is distributed with **TestFlight** (Apple's free
-beta app): your manager sends an invitation link; it installs TestFlight first, then OnlyX Login
-inside it. Open OnlyX Login once — after that your connect links open it by themselves.
+beta app): your manager sends an invitation link; it installs TestFlight first, then Onlyx Login
+inside it. Open Onlyx Login once — after that your connect links open it by themselves.
 
 Then, from the chat where your manager sent your connect link (it starts with `onlyx-connect://`):
 
-- **tap it** — iOS asks whether to open OnlyX Login; choose Open; or
-- **copy it** (press and hold → Copy), open OnlyX Login, tap **Paste your link**. Many chat apps
+- **tap it** — iOS asks whether to open Onlyx Login; choose Open; or
+- **copy it** (press and hold → Copy), open Onlyx Login, tap **Paste your link**. Many chat apps
   do not make custom links tappable; pasting always works. iOS asks once whether to allow the
   paste — that is the system, not the app.
 
@@ -50,13 +50,13 @@ Help is **inside the app** (the Help button), and it answers without a connectio
   exactly those tokens so the string is what her Safari sends. See below for why native is the
   only coherent option on iOS.
 - The new build routes the sign-in browser's HTTPS traffic through **the account's assigned
-  proxy**, using an authenticated local SOCKS5 bridge and the OnlyX encrypted WebSocket relay.
+  proxy**, using an authenticated local SOCKS5 bridge and the Onlyx encrypted WebSocket relay.
   Proxy credentials stay on the server. The app checks the measured exit before sign-in and
   before import; the server checks again before accepting the session. A missing/failed route
   stops the sign-in rather than falling back to the phone's direct connection. The identity
   check must stay inside this web view; an external browser or another device does not inherit it.
 - When OnlyFans confirms the sign-in (a `/users/me` answer naming her, with the login cookies in
-  the jar), the app hands the session and the device token to OnlyX and closes the browser. OnlyX
+  the jar), the app hands the session and the device token to Onlyx and closes the browser. Onlyx
   verifies it on its side; the app shows **Connected** when the seat says so, and nothing sooner.
 - The app talks to exactly one server, fixed in the binary. A link carries a one-time code and
   nothing else — it cannot point the app anywhere.

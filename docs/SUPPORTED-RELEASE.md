@@ -1,6 +1,6 @@
-# Supported-host release for OnlyX Login
+# Supported-host release for Onlyx Login
 
-This is the reusable build, signing and upload procedure for bundle `ai.onlyx.login`, team `Y5NUN99S3X`, app/executable **OnlyX Login**. Run the examples from the repository root. Keep signing credentials, reviewer details and local upload records outside this public repository.
+This is the reusable build, signing and upload procedure for bundle `ai.onlyx.login`, team `Y5NUN99S3X`, app/executable **Onlyx Login**. Run the examples from the repository root. Keep signing credentials, reviewer details and local upload records outside this public repository.
 
 The historical supported-host **1.0 (4)** archive and validation results are recorded in
 [RELEASE-4.json](RELEASE-4.json). They are not current review-status evidence. The new **1.1**
@@ -68,7 +68,7 @@ export ONLYX_EXPORT_DIR="$PWD/build/OnlyXLogin-$ONLYX_BUILD_NUMBER-supported-exp
 bash scripts/export-store.sh
 ```
 
-Both output paths must be new. Preparation keeps the source archive unchanged and signs its copy with the existing app identifier, team, default Keychain group, disabled debugger access and distribution entitlement. **OnlyX Login has no Push Notifications or Sign in with Apple capability**; do not copy TalkGF entitlements. Export verifies the profile/certificate, strict signature, original app metadata/resources, and matching executable/dSYM UUID. Require successful exit plus `verified: true` in `verification.json`; keep that report and its IPA SHA-256.
+Both output paths must be new. Preparation keeps the source archive unchanged and signs its copy with the existing app identifier, team, default Keychain group, disabled debugger access and distribution entitlement. **Onlyx Login has no Push Notifications or Sign in with Apple capability**; do not copy TalkGF entitlements. Export verifies the profile/certificate, strict signature, original app metadata/resources, and matching executable/dSYM UUID. Require successful exit plus `verified: true` in `verification.json`; keep that report and its IPA SHA-256.
 
 The current local Mac is still macOS 27 beta, outside Xcode 26.6's supported host range. Selecting stable Xcode for local signing/export does not make that host supported. Prefer a supported Mac for export too when available. A local export result is separate from Apple processing and review; it must never be represented as approval. This procedure performs no local compilation and preserves the supported host's compiler metadata.
 

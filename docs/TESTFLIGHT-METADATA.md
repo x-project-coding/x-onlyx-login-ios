@@ -6,7 +6,7 @@ details in App Store Connect only; never commit them to this repository.
 ## App record
 
 - Platform: iOS
-- Name: OnlyX Login
+- Name: Onlyx Login
 - App Store Connect Apple ID: `6808706039`
 - Primary language: English (U.S.)
 - Bundle ID: `ai.onlyx.login`
@@ -15,14 +15,14 @@ details in App Store Connect only; never commit them to this repository.
 
 ## Internal testing
 
-- Group: `OnlyX Internal`
+- Group: `Onlyx Internal`
 - Automatic distribution: enabled
 - Build: `1.0 (2)`
 - Testers: 1 configured in App Store Connect
 
 ## External testing
 
-- Group: `OnlyX Login Beta`
+- Group: `Onlyx Login Beta`
 - Build: `1.0 (2)`
 - Beta App Review status: Replacement `1.0 (2)` submitted and waiting for review after `1.0 (1)`
   was rejected on September 5, 2026; Apple's requested demo video was supplied and a response was
@@ -36,14 +36,14 @@ The public link becomes joinable after Apple approves the build for external tes
 
 ### Beta app description
 
-OnlyX Login is a sign-in helper for creators who need to connect their own OnlyFans account to an
-OnlyX-managed workspace. A creator opens or pastes a one-time link from their manager, signs in
+Onlyx Login is a sign-in helper for creators who need to connect their own OnlyFans account to an
+Onlyx-managed workspace. A creator opens or pastes a one-time link from their manager, signs in
 inside a private browser, completes any identity check on their iPhone, and waits for Connected.
 Browser data is discarded when the run ends.
 
 ### What to test
 
-Open or paste an OnlyX connect link. Confirm that the OnlyFans sign-in loads, camera verification
+Open or paste an Onlyx connect link. Confirm that the OnlyFans sign-in loads, camera verification
 can be completed when requested, and the app reaches Connected. Also verify that expired or invalid
 links show a clear recovery message. Use only the designated test creator account.
 
@@ -53,9 +53,9 @@ links show a clear recovery message. Use only the designated test creator accoun
 
 ### Beta App Review notes
 
-OnlyX Login has no independent user account. A customer manager generates a one-time connect link
+Onlyx Login has no independent user account. A customer manager generates a one-time connect link
 for the creator; links expire after 15 minutes and cannot be used twice. The app opens OnlyFans in
-an ephemeral WKWebView, sends the signed-in session to the creator's authorized OnlyX workspace,
+an ephemeral WKWebView, sends the signed-in session to the creator's authorized Onlyx workspace,
 and discards local website data when the run ends. To exercise the complete flow, contact
 support@onlyx.ai so we can issue a fresh review link and designated test account at review time.
 Camera access is used only if OnlyFans requests identity verification. The app has no purchases,
@@ -67,13 +67,13 @@ Demo video recorded on a physical iPhone 17 Pro Max using `1.0 (1)` (not Simulat
 Build `1.0 (2)` contains the same app code as the recording; its only change is the required build
 number increment for resubmission after `1.0 (1)` was rejected.
 
-The video demonstrates opening the OnlyX connect invitation in Safari, handing off to OnlyX Login,
+The video demonstrates opening the Onlyx connect invitation in Safari, handing off to Onlyx Login,
 and opening the embedded OnlyFans sign-in flow.
 
 ## External-testing checklist
 
 - [x] Enter an actively monitored Beta App Review contact.
-- [x] Create the `OnlyX Login Beta` external group.
+- [x] Create the `Onlyx Login Beta` external group.
 - [x] Upload and validate the signed `1.0 (1)` archive.
 - [x] Upload and validate the signed replacement `1.0 (2)` archive.
 - [x] Declare that the app does not use non-exempt encryption.
