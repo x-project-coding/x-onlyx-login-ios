@@ -33,21 +33,22 @@ enum Brand {
     static let warn = Color(red: 0xfb / 255, green: 0xbf / 255, blue: 0x24 / 255)
 }
 
-/// The Onlyx mark: a dark disc with a blue ring.
+/// The approved Onlyx mark, bundled unchanged for offline screens.
 struct Mark: View {
     var size: CGFloat = 22
     var body: some View {
-        Circle().fill(Color(red: 0x09 / 255, green: 0x09 / 255, blue: 0x0b / 255))
-            .overlay(Circle().strokeBorder(Brand.blue, lineWidth: size * 0.11))
+        Image("OnlyxMark").resizable().scaledToFit()
             .frame(width: size, height: size)
+            .accessibilityHidden(true)
     }
 }
 
 struct BrandRow: View {
     var body: some View {
         HStack(spacing: 9) {
-            Mark()
-            Text("Onlyx Login").font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text)
+            Image("OnlyxWordmark").resizable().scaledToFit().frame(width: 112, height: 28)
+                .accessibilityLabel("Onlyx")
+            Text("Login").font(.system(size: 17, weight: .medium)).foregroundColor(Brand.text)
         }
     }
 }
