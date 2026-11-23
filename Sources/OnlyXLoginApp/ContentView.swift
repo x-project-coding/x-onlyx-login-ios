@@ -33,7 +33,7 @@ enum Brand {
     static let warn = Color(red: 0xfb / 255, green: 0xbf / 255, blue: 0x24 / 255)
 }
 
-/// The OnlyX mark: a dark disc with a blue ring.
+/// The Onlyx mark: a dark disc with a blue ring.
 struct Mark: View {
     var size: CGFloat = 22
     var body: some View {
@@ -47,7 +47,7 @@ struct BrandRow: View {
     var body: some View {
         HStack(spacing: 9) {
             Mark()
-            Text("OnlyX Login").font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text)
+            Text("Onlyx Login").font(.system(size: 17, weight: .bold)).foregroundColor(Brand.text)
         }
     }
 }
@@ -111,11 +111,11 @@ struct FullScreen: View {
     private var text: String {
         switch phase {
         case .idle:
-            return "This app connects your OnlyFans account to OnlyX. Open the chat where your manager sent your connect link and tap it — or copy the link and paste it here."
+            return "This app connects your OnlyFans account to Onlyx. Open the chat where your manager sent your connect link and tap it — or copy the link and paste it here."
         case .opening: return "Setting up a private connection for your account."
-        case .captured: return "Sending your sign-in to OnlyX…"
-        case .verifying: return "OnlyX is taking over the session for \(who). This usually takes under a minute."
-        case .success: return "\(who) is now connected to OnlyX. You can close this app."
+        case .captured: return "Sending your sign-in to Onlyx…"
+        case .verifying: return "Onlyx is taking over the session for \(who). This usually takes under a minute."
+        case .success: return "\(who) is now connected to Onlyx. You can close this app."
         case .error(let m, _): return m.detail
         case .signin: return ""
         }
@@ -123,7 +123,7 @@ struct FullScreen: View {
 
     private var detail: String? {
         switch phase {
-        case .idle: return "No link? Ask your manager for one. OnlyX Login only needs to stay installed, not open."
+        case .idle: return "No link? Ask your manager for one. Onlyx Login only needs to stay installed, not open."
         case .verifying: return "Please keep the app open."
         default: return nil
         }
@@ -255,16 +255,16 @@ struct HelpSheet: View {
 
     static let entries: [(String, String)] = [
         ("Nothing happened when I tapped my link",
-         "Some chat apps do not open app links directly. Press and hold the link, choose Copy, open OnlyX Login and tap “Paste your link”."),
+         "Some chat apps do not open app links directly. Press and hold the link, choose Copy, open Onlyx Login and tap “Paste your link”."),
         ("How do I install the app?",
-         "Your manager sends an invitation link. It installs Apple's TestFlight app first (free), then OnlyX Login inside it. Open OnlyX Login once; after that your connect links open it by themselves."),
+         "Your manager sends an invitation link. It installs Apple's TestFlight app first (free), then Onlyx Login inside it. Open Onlyx Login once; after that your connect links open it by themselves."),
         ("My link says it has expired",
          "Links work once, and for 15 minutes. Ask your manager to send a new one — it takes them a second."),
         ("I signed in to the wrong account",
          "Sign out inside the sign-in screen and sign in again with the account your manager is expecting. You do not need a new link."),
         ("OnlyFans is asking for a selfie or a video check",
-         "That is normal. Allow the camera when your iPhone asks, hold the phone up to your face, and follow OnlyFans' instructions. Nothing is recorded by OnlyX. If you refused the camera earlier: Settings › OnlyX Login › Camera, switch it on, then open your link again."),
-        ("It says it cannot reach OnlyX",
+         "That is normal. Allow the camera when your iPhone asks, hold the phone up to your face, and follow OnlyFans' instructions. Nothing is recorded by Onlyx. If you refused the camera earlier: Settings › Onlyx Login › Camera, switch it on, then open your link again."),
+        ("It says it cannot reach Onlyx",
          "Check your internet connection and open the link again. If it keeps happening, tell your manager."),
     ]
 

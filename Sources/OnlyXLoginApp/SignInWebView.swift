@@ -34,7 +34,7 @@ final class SignInController: NSObject, ObservableObject {
     let webView: WKWebView
     var onMe: ((SessionCapture.Me) -> Void)? = nil
     var onCrash: (() -> Void)? = nil
-    /// The camera is refused at the SYSTEM level (Settings › OnlyX Login › Camera off). Raised once
+    /// The camera is refused at the SYSTEM level (Settings › Onlyx Login › Camera off). Raised once
     /// so the sign-in screen can say how to recover; the vendor's iframe only says "unavailable".
     var onCameraBlocked: (() -> Void)? = nil
     private var closed = false
