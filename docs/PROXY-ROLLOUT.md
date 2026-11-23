@@ -12,7 +12,7 @@ phone has different routing requirements.
 
 WebKit uses `WKWebsiteDataStore.proxyConfigurations` before constructing its private web view.
 Its authenticated loopback SOCKS5 listener forwards each domain-name HTTPS connection over WSS
-to the existing OnlyX relay. The relay owns the upstream proxy credentials. The app only holds a
+to the existing Onlyx relay. The relay owns the upstream proxy credentials. The app only holds a
 short-lived, per-account pass and random local credentials, all in memory. TLS to the website
 remains end-to-end. The relay origin must match the compiled API origin; redirects cannot carry
 the bearer elsewhere. Local clients without the run's password are refused.

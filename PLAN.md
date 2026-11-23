@@ -1,6 +1,6 @@
-# Plan — OnlyX Login for iPhone
+# Plan — Onlyx Login for iPhone
 
-**Why.** 90% of the creators OnlyX onboards in Argentina have no laptop. The mac/Windows app exists
+**Why.** 90% of the creators Onlyx onboards in Argentina have no laptop. The mac/Windows app exists
 because a creator has to sign in herself — OnlyFans asks for her face — and an agency owner cannot
 do that for her. On a phone, the streamed browser is a poor sign-in (VNC typing, and the identity
 check compares networks between the seat's proxy and her phone). A native iPhone app signs her in on
@@ -31,7 +31,7 @@ her own device, with her own camera, on her own connection.
    Expect to tune: the observer's timing vs OnlyFans' SPA (the first `/users/me` may be the guest
    answer), the settle delay, the camera inline-video behaviour in the vendor's iframe.
 3. **v0.2 — the connect page offers it.** `x-onlyx-ui` `connect-desktop.ts` currently returns the
-   streamed browser for every phone. Add an `ios` platform: on an iPhone, show "Open in OnlyX Login"
+   streamed browser for every phone. Add an `ios` platform: on an iPhone, show "Open in Onlyx Login"
    (the same deep link) + the TestFlight install link + the paste instruction, and keep the streamed
    browser as the fallback. `x-onlyx-api` gains `connect_app_download_ios_url` (empty = not offered,
    like the mac/win URLs) and `downloadIosUrl` in `PublicConnectDesktopOut`.

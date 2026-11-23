@@ -15,7 +15,7 @@ only with a creator the operator names as a test account — never a live, earni
   in to Xcode: Xcode › Settings › Accounts. Note the **Team ID** (10 characters, in
   developer.apple.com › Membership).
 - Have Xcode 16 or newer installed (`xcode-select -p` should point at it) and Homebrew.
-- Pick the **test creator** in the OnlyX console and send himself its connect link
+- Pick the **test creator** in the Onlyx console and send himself its connect link
   (`https://app.onlyx.ai/connect/<token>`). That link is what mints the app's one-time pass.
 
 ## 1. Clone, generate, prove the core
@@ -84,7 +84,7 @@ If `ai.onlyx.login` is already taken on the team, change `PRODUCT_BUNDLE_IDENTIF
 
 Run it from Xcode (⌘R). On a personal/free team the phone asks to trust the developer profile
 (Settings › General › VPN & Device Management). Then mint a fresh pass as above and get the link
-onto the phone: paste it into Safari's address bar (iOS asks "Open in OnlyX Login?"), or copy it
+onto the phone: paste it into Safari's address bar (iOS asks "Open in Onlyx Login?"), or copy it
 and use **Paste your link** on the app's idle screen. Sign in as the test creator; allow the camera
 when iOS asks; follow OnlyFans' selfie check if it appears. Watch the log in Console.app with the
 same subsystem filter.
@@ -105,16 +105,16 @@ same subsystem filter.
 
 Only after a device run has reached Connected at least once.
 
-1. In App Store Connect create the app record: name **OnlyX Login**, bundle id `ai.onlyx.login`,
+1. In App Store Connect create the app record: name **Onlyx Login**, bundle id `ai.onlyx.login`,
    primary language English. Export compliance is already answered in Info.plist
    (`ITSAppUsesNonExemptEncryption = NO`).
 2. Xcode: Product › Archive with "Any iOS Device (arm64)" selected, then Distribute App › App Store
    Connect › Upload, automatic signing.
 3. App Store Connect › TestFlight: add the build to an **external** group, fill the Beta App Review
    notes plainly — "A sign-in helper: a creator opens it from a link her agency sends, signs in to
-   her own OnlyFans account inside the app, and the app hands the session to OnlyX. It stores
+   her own OnlyFans account inside the app, and the app hands the session to Onlyx. It stores
    nothing." — and submit. Enable the **public link** on the group.
-4. Send the public link back. On the server it becomes `CONNECT_APP_DOWNLOAD_IOS_URL` for the OnlyX
+4. Send the public link back. On the server it becomes `CONNECT_APP_DOWNLOAD_IOS_URL` for the Onlyx
    API, which is what makes the connect page offer the app to iPhones (PRs x-onlyx-api #276 and
    x-onlyx-ui #258, once merged and deployed). Builds expire after 90 days; a new archive is a
    new build in the same group.
