@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>OnlyX Login</string>
+	<string>Onlyx Login</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -35,9 +35,9 @@
 	</array>
 	<!-- The selfie check. Shown by iOS the first time OnlyFans' vendor asks for the camera. -->
 	<key>NSCameraUsageDescription</key>
-	<string>OnlyFans may ask you to take a selfie to confirm your identity when you sign in. OnlyX Login shows that check in the sign-in screen and records nothing.</string>
+	<string>OnlyFans may ask you to take a selfie to confirm your identity when you sign in. Onlyx Login shows that check in the sign-in screen and records nothing.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Some identity checks ask for a short video with sound. OnlyX Login records nothing.</string>
+	<string>Some identity checks ask for a short video with sound. Onlyx Login records nothing.</string>
 	<!-- An empty launch-screen dictionary gives the system default; there is no asset catalog. -->
 	<key>UILaunchScreen</key>
 	<dict/>
